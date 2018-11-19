@@ -1,16 +1,17 @@
 package puyo;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class Puyo extends Component {
+public class Puyo extends JPanel {
 	private Image image;
 	private Field container;
 	/**
@@ -114,12 +115,15 @@ public class Puyo extends Component {
 	public Dimension getPreferredSize() {
 		return new Dimension(50,50);
 	}
+	public Rectangle getBounds() {
+		return new Rectangle(posX, posY, 50, 50);
+	}
+	
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, 0,  0, this);
 	}
 
 	class PuyoDropper extends Thread {
-		private int interY;
 
 		public PuyoDropper() {
 		}
@@ -127,9 +131,11 @@ public class Puyo extends Component {
 		//repaint(long tm, int x, int y, int width, int height)
 		public void run() {
 			System.out.println(Thread.currentThread().getName());
-			for (int interY = 0; interY < 50; interY += 5) {
-				System.out.println(interY +5);
-				repaint(30, posX, posY, 50, 50 + interY);
+			for (int i = 0; i < 10; i++) {
+				posY += 5;
+				System.out.println("posY: " + posY);
+				//container.repaint(30, posX, posY, 50, 50 + interY);
+				container.repaint();
 				try {
 					sleep(30);
 				} catch (Exception e) {
@@ -138,6 +144,7 @@ public class Puyo extends Component {
 				}
 			}
 			frameY++;
+			posY = frameY *50;
 		}
 	}
 }

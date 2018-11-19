@@ -50,6 +50,7 @@ public class Field extends JPanel {
 		add(kumiPuyo[0]);
 		add(kumiPuyo[1]);
 		downTimer.start();
+		
 	}
 
 	public Dimension getPreferredSize() {
