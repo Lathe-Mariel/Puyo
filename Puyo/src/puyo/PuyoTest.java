@@ -39,6 +39,10 @@ public class PuyoTest extends JFrame {
 		setContentPane(contentPane);
 		
 		field0 = new Field();
+		npp = new NextPuyoPanel(field0);
+		contentPane.add(field0, BorderLayout.WEST);
+		
 	}
 Field field0;
+NextPuyoPanel npp;
 }
