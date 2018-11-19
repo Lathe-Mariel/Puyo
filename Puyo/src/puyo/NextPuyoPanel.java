@@ -10,6 +10,7 @@ public class NextPuyoPanel extends JPanel {
 
 	public NextPuyoPanel(Field connectField) {
 		this.connectField = connectField;
+		nextPuyoQueue = new ArrayList<Puyo>();
 	}
 
 	Puyo[] pop() {

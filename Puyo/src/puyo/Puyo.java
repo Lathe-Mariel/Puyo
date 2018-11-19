@@ -1,6 +1,7 @@
 package puyo;
 
 import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class Puyo extends Component {
 	/**
 	 * Position in the field by fram(6 x 12)
 	 */
-	private int frameX, frameY;
+	private int frameX=0, frameY=0;
 	private int colorNumber;
 	private static Image[] puyoImageArray; //redPuyoImage, greenPuyoImage, bluePuyoImage, yellowPuyoImage, yellowGreenPuyoImage, grayPuyoImage;
 
@@ -35,11 +36,11 @@ public class Puyo extends Component {
 		try {
 			puyoImageArray = new Image[6];
 			puyoImageArray[0] = ImageIO.read(new File("red.jpg"));
-			puyoImageArray[1] = ImageIO.read(new File("green.png"));
-			puyoImageArray[2] = ImageIO.read(new File("blue.png"));
-			puyoImageArray[3] = ImageIO.read(new File("yellow.png"));
-			puyoImageArray[4] = ImageIO.read(new File("yellowGreen.png"));
-			puyoImageArray[5] = ImageIO.read(new File("gray.png"));
+//			puyoImageArray[1] = ImageIO.read(new File("green.png"));
+//			puyoImageArray[2] = ImageIO.read(new File("blue.png"));
+//			puyoImageArray[3] = ImageIO.read(new File("yellow.png"));
+//			puyoImageArray[4] = ImageIO.read(new File("yellowGreen.png"));
+//			puyoImageArray[5] = ImageIO.read(new File("gray.png"));
 		} catch (IOException e) {
 			System.out.println("Error from static block, It's Puyo images loading process");
 			e.printStackTrace();
@@ -64,8 +65,14 @@ public class Puyo extends Component {
 		underSpace++;
 	}
 
+	void setFrameX(int x) {
+		this.frameX = x;
+	}
 	int getFrameX() {
 		return frameX;
+	}
+	void setFrameY(int y) {
+		this.frameY = y;
 	}
 	int getFrameY(){
 		return frameY;
@@ -79,7 +86,7 @@ public class Puyo extends Component {
 	}
 
 	public boolean naturalDrop() {
-		if (container.isTherePuyo(frameX, frameY + 1))
+		if (container.isTherePuyo(frameX, frameY + 1) || frameY == 13)
 			return false;
 		SwingUtilities.invokeLater(new PuyoDropper());
 		return true;
@@ -92,13 +99,16 @@ public class Puyo extends Component {
 			SwingUtilities.invokeLater(dropper);
 			try {
 				while (dropper.isAlive()) {
-					Thread.sleep(50);
+					Thread.sleep(30);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		underSpace = 0;
+	}
+	public void paintComponent(Graphics g) {
+		g.drawImage(image, 0,  0, this);
 	}
 
 	class PuyoDropper extends Thread {
@@ -110,15 +120,16 @@ public class Puyo extends Component {
 		//repaint(long tm, int x, int y, int width, int height)
 		public void run() {
 			for (int interY = 0; interY < 50; interY += 5) {
+				System.out.println(interY +5);
 				repaint(50, posX, posY, posX + 50, posY + interY);
 				try {
-					sleep(50);
+					sleep(30);
 				} catch (Exception e) {
 					System.out.println("Puyo Dropper Sleep");
 					e.printStackTrace();
 				}
 			}
-			frameY--;
+			frameY++;
 		}
 	}
 }

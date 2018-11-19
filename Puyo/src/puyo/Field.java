@@ -27,6 +27,7 @@ public class Field extends JPanel {
 	}
 
 	boolean isTherePuyo(int frameX, int frameY) {
+		System.out.println("frameX: " + frameX + "    frameY: " + frameY);
 		if (puyoArray[frameX][frameY] == null) {
 			return false;
 		}
@@ -45,9 +46,9 @@ public class Field extends JPanel {
 
 	void startNewPuyo() {
 		downTimer = new Timer(500, new PuyoListener());
-		Puyo[] kumiPuyo = npp.pop();
-		puyoArray[2][0] = kumiPuyo[1];
-		puyoArray[2][1] = kumiPuyo[0];
+		kumiPuyo = npp.pop();
+		add(kumiPuyo[0]);
+		add(kumiPuyo[1]);
 		downTimer.start();
 	}
 
