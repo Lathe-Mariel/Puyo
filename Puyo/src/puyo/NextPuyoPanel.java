@@ -16,7 +16,7 @@ public class NextPuyoPanel extends JPanel {
 	Puyo[] pop() {
 		Puyo[] popOutPuyos = new Puyo[2];
 		popOutPuyos[0] = (nextPuyoQueue.get(0));
-		popOutPuyos[1] = (nextPuyoQueue.get(0));
+		popOutPuyos[1] = (nextPuyoQueue.get(1));
 		if(nextPuyoQueue.size() <=4) {
 			PuyoUtil.generatePuyos(5);
 		}

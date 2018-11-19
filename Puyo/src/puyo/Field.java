@@ -59,6 +59,7 @@ public class Field extends JPanel {
 	class PuyoListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == downTimer) {
+				System.out.println("tiemr");
 				boolean puyo0 = kumiPuyo[0].naturalDrop();
 				boolean puyo1 = kumiPuyo[1].naturalDrop();
 

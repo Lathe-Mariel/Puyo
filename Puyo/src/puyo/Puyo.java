@@ -1,6 +1,7 @@
 package puyo;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
@@ -36,11 +37,11 @@ public class Puyo extends Component {
 		try {
 			puyoImageArray = new Image[6];
 			puyoImageArray[0] = ImageIO.read(new File("red.jpg"));
-//			puyoImageArray[1] = ImageIO.read(new File("green.png"));
-//			puyoImageArray[2] = ImageIO.read(new File("blue.png"));
-//			puyoImageArray[3] = ImageIO.read(new File("yellow.png"));
-//			puyoImageArray[4] = ImageIO.read(new File("yellowGreen.png"));
-//			puyoImageArray[5] = ImageIO.read(new File("gray.png"));
+			puyoImageArray[1] = ImageIO.read(new File("green.jpg"));
+			puyoImageArray[2] = ImageIO.read(new File("blue.jpg"));
+			puyoImageArray[3] = ImageIO.read(new File("yellow.jpg"));
+			puyoImageArray[4] = ImageIO.read(new File("yellowGreen.jpg"));
+			puyoImageArray[5] = ImageIO.read(new File("gray.jpg"));
 		} catch (IOException e) {
 			System.out.println("Error from static block, It's Puyo images loading process");
 			e.printStackTrace();
@@ -67,12 +68,14 @@ public class Puyo extends Component {
 
 	void setFrameX(int x) {
 		this.frameX = x;
+		posX = frameX *50;
 	}
 	int getFrameX() {
 		return frameX;
 	}
 	void setFrameY(int y) {
 		this.frameY = y;
+		posY = frameY *50;
 	}
 	int getFrameY(){
 		return frameY;
@@ -86,13 +89,14 @@ public class Puyo extends Component {
 	}
 
 	public boolean naturalDrop() {
-		if (container.isTherePuyo(frameX, frameY + 1) || frameY == 13)
+		if (container.isTherePuyo(frameX, frameY + 1) || frameY == 12)
 			return false;
 		SwingUtilities.invokeLater(new PuyoDropper());
 		return true;
 	}
 
 	public void downStairs() {
+		System.out.println("downStairs");
 		for (int roop = 0; roop < underSpace; roop++) {
 			Boolean isFinish = false;
 			Thread dropper = new PuyoDropper();
@@ -107,6 +111,9 @@ public class Puyo extends Component {
 		}
 		underSpace = 0;
 	}
+	public Dimension getPreferredSize() {
+		return new Dimension(50,50);
+	}
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, 0,  0, this);
 	}
@@ -119,9 +126,10 @@ public class Puyo extends Component {
 
 		//repaint(long tm, int x, int y, int width, int height)
 		public void run() {
+			System.out.println(Thread.currentThread().getName());
 			for (int interY = 0; interY < 50; interY += 5) {
 				System.out.println(interY +5);
-				repaint(50, posX, posY, posX + 50, posY + interY);
+				repaint(30, posX, posY, 50, 50 + interY);
 				try {
 					sleep(30);
 				} catch (Exception e) {
