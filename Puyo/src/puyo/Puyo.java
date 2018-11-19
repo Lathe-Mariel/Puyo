@@ -34,7 +34,7 @@ public class Puyo extends Component {
 	static {
 		try {
 			puyoImageArray = new Image[6];
-			puyoImageArray[0] = ImageIO.read(new File("red.png"));
+			puyoImageArray[0] = ImageIO.read(new File("red.jpg"));
 			puyoImageArray[1] = ImageIO.read(new File("green.png"));
 			puyoImageArray[2] = ImageIO.read(new File("blue.png"));
 			puyoImageArray[3] = ImageIO.read(new File("yellow.png"));

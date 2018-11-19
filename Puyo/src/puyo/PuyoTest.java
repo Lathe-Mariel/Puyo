@@ -40,8 +40,12 @@ public class PuyoTest extends JFrame {
 		
 		field0 = new Field();
 		npp = new NextPuyoPanel(field0);
+		field0.setNPP(npp);
 		contentPane.add(field0, BorderLayout.WEST);
-		
+		PuyoUtil.addNextPuyoPanel(npp);
+		PuyoUtil.generatePuyos(5);
+		PuyoUtil.generatePuyos(5);
+		field0.startNewPuyo();
 	}
 Field field0;
 NextPuyoPanel npp;

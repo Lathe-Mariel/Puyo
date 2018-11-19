@@ -12,9 +12,15 @@ public class Field extends JPanel {
 	private Puyo[][] puyoArray;
 	private Timer downTimer;
 	private Puyo[] kumiPuyo;
+	private NextPuyoPanel npp;
 
 	public Field() {
 		setLayout(null);
+		puyoArray = new Puyo[6][14];
+	}
+
+	public void setNPP(NextPuyoPanel npp) {
+		this.npp = npp;
 	}
 
 	public void paintComponent(Graphics g) {
@@ -37,10 +43,14 @@ public class Field extends JPanel {
 		}
 	}
 
-	private void startNewPuyo() {
+	void startNewPuyo() {
 		downTimer = new Timer(500, new PuyoListener());
+		Puyo[] kumiPuyo = npp.pop();
+		puyoArray[2][0] = kumiPuyo[1];
+		puyoArray[2][1] = kumiPuyo[0];
+		downTimer.start();
 	}
-	
+
 	public Dimension getPreferredSize() {
 		return new Dimension(310,610);
 	}

@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class PuyoUtil {
-		private static ArrayList<NextPuyoPanel> nextPuyoPanels;
+		private static ArrayList<NextPuyoPanel> nextPuyoPanels = new ArrayList<NextPuyoPanel>();
 
-
-void addNextPuyoPanel(NextPuyoPanel npp) {
+static void addNextPuyoPanel(NextPuyoPanel npp) {
 	nextPuyoPanels.add(npp);
 }
 	/**
