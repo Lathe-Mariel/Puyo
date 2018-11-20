@@ -3,13 +3,7 @@ package puyo;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.Image;
-import java.io.File;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -45,9 +39,8 @@ public class PuyoTest extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
+
 		field0 = new Field();
-		field0.setLayout(new FlowLayout());
 		npp = new NextPuyoPanel(field0);
 		field0.setNPP(npp);
 		field0.setBorder(new LineBorder(Color.red, 4));
@@ -56,12 +49,7 @@ public class PuyoTest extends JFrame {
 		PuyoUtil.generatePuyos(5);
 		PuyoUtil.generatePuyos(5);
 		field0.startNewPuyo();
-		Image img = null;
-		try {
-		img = ImageIO.read(new File("red.jpg"));
-		}catch(Exception e) {}
-		ImageIcon imgIcon = new ImageIcon(img);
-		contentPane.add(new JButton(imgIcon), BorderLayout.EAST);
+
 	}
 Field field0;
 NextPuyoPanel npp;

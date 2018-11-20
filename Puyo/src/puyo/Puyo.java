@@ -21,7 +21,7 @@ public class Puyo extends JPanel {
 	/**
 	 * Position in the field by dot
 	 */
-	private int posX, posY;
+	private int x, y;
 	/**
 	 * Position in the field by fram(6 x 12)
 	 */
@@ -37,12 +37,12 @@ public class Puyo extends JPanel {
 	static {
 		try {
 			puyoImageArray = new Image[6];
-			puyoImageArray[0] = ImageIO.read(new File("red.jpg"));
-			puyoImageArray[1] = ImageIO.read(new File("green.jpg"));
-			puyoImageArray[2] = ImageIO.read(new File("blue.jpg"));
-			puyoImageArray[3] = ImageIO.read(new File("yellow.jpg"));
-			puyoImageArray[4] = ImageIO.read(new File("yellowGreen.jpg"));
-			puyoImageArray[5] = ImageIO.read(new File("gray.jpg"));
+			puyoImageArray[0] = ImageIO.read(new File("red.png"));
+			puyoImageArray[1] = ImageIO.read(new File("green.png"));
+			puyoImageArray[2] = ImageIO.read(new File("blue.png"));
+			puyoImageArray[3] = ImageIO.read(new File("yellow.png"));
+			puyoImageArray[4] = ImageIO.read(new File("purple.png"));
+			puyoImageArray[5] = ImageIO.read(new File("gray.png"));
 		} catch (IOException e) {
 			System.out.println("Error from static block, It's Puyo images loading process");
 			e.printStackTrace();
@@ -57,6 +57,7 @@ public class Puyo extends JPanel {
 
 	public Puyo(int color) {
 		this.colorNumber = color;
+		this.image = puyoImageArray[color];
 	}
 
 	public int getUnderSpace() {
@@ -69,17 +70,29 @@ public class Puyo extends JPanel {
 
 	void setFrameX(int x) {
 		this.frameX = x;
-		posX = frameX *50;
+		this.x = frameX *50;
 	}
 	int getFrameX() {
 		return frameX;
 	}
 	void setFrameY(int y) {
 		this.frameY = y;
-		posY = frameY *50;
+		this.y = frameY *50;
+		System.out.println("Puyo position: " + this.y);
 	}
 	int getFrameY(){
 		return frameY;
+	}
+	@Override
+	public int getX() {
+		return x;
+	}
+	@Override
+	public int getY() {
+		return y;
+	}
+	Image getImage() {
+		return image;
 	}
 	void setContainer(Field container) {
 		this.container = container;
@@ -115,10 +128,13 @@ public class Puyo extends JPanel {
 	public Dimension getPreferredSize() {
 		return new Dimension(50,50);
 	}
-	public Rectangle getBounds() {
-		return new Rectangle(posX, posY, 50, 50);
+	public Dimension getSize() {
+		return new Dimension(50,50);
 	}
-	
+	public Rectangle getBounds() {
+		return new Rectangle(x, y, 50, 50);
+	}
+
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, 0,  0, this);
 	}
@@ -132,10 +148,13 @@ public class Puyo extends JPanel {
 		public void run() {
 			System.out.println(Thread.currentThread().getName());
 			for (int i = 0; i < 10; i++) {
-				posY += 5;
-				System.out.println("posY: " + posY);
-				//container.repaint(30, posX, posY, 50, 50 + interY);
-				container.repaint();
+				y += 5;
+				System.out.println("posY: " + y);
+
+				//container.revalidate();
+				setBounds(x, y, 50, 50);
+				container.repaint(30, x, y, 50, 50 + y);
+				//container.repaint();
 				try {
 					sleep(30);
 				} catch (Exception e) {
@@ -144,7 +163,7 @@ public class Puyo extends JPanel {
 				}
 			}
 			frameY++;
-			posY = frameY *50;
+			y = frameY *50;
 		}
 	}
 }
