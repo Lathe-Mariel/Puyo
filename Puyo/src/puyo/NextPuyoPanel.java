@@ -1,5 +1,6 @@
 package puyo;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -31,5 +32,8 @@ public class NextPuyoPanel extends JPanel {
 		nextPuyoQueue.add(newPuyo[1]);
 		newPuyo[0].setContainer(connectField);
 		newPuyo[1].setContainer(connectField);
+	}
+	public Dimension getPreferredSize() {
+		return new Dimension(150,150);
 	}
 }
