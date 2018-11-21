@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import puyo.Field.PuyoKeyListener;
+
 public class PuyoTest extends JFrame {
 
 	private JPanel contentPane;
@@ -39,7 +41,9 @@ public class PuyoTest extends JFrame {
 		setContentPane(contentPane);
 		field0 = new Field();
 		field0.init();
-		addKeyListener(field0.new PuyoKeyListener());;
+		PuyoKeyListener pkl = field0.new PuyoKeyListener();
+		addKeyListener(pkl);
+		field0.setKeyListener(pkl);
 		
 		npp = new NextPuyoPanel(field0);
 		field0.setNPP(npp);
