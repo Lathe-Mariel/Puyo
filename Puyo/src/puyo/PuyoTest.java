@@ -32,7 +32,7 @@ public class PuyoTest extends JFrame {
 	 */
 	public PuyoTest() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 460, 800);
+		setBounds(100, 0, 460, 800);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));

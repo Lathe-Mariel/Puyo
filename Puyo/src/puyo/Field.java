@@ -113,12 +113,17 @@ public class Field extends JPanel {
 		return new Dimension(400, 800);
 	}
 
+	boolean inProcessKeyEvent;
+
 	public class PuyoKeyListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
+			if (inProcessKeyEvent) {
+				e.consume();
+				return;
+			}
 			//System.out.println("keyPressed");
 			int key = e.getKeyCode();
 			if (key == KeyEvent.VK_PERIOD) {
-
 			} else if (key == KeyEvent.VK_RIGHT) {
 				if (kumiPuyo[0].getFrameY() > kumiPuyo[1].getFrameY()) {//kumiPuyo is in vertical, and kumiPuyo[0] is lower side.
 					if (puyoArray[kumiPuyo[0].getFrameX() + 1][kumiPuyo[0].getFrameY()] == null) {
@@ -157,6 +162,7 @@ public class Field extends JPanel {
 				}
 
 			}
+			inProcessKeyEvent = false;
 		}
 
 		private void kumiPuyoMove(int x, int y) {

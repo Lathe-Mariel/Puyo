@@ -1,5 +1,6 @@
 package puyo;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -122,7 +123,9 @@ public class Puyo extends JPanel {
 	 */
 	synchronized void moveCommand(int x, int y) {
 		//System.out.println("x: " + x + "  Y: " + y);
-		new PuyoMover(x, y).start();
+		frameX += x;
+		frameY += y;
+		new PuyoMover(x, y, this).start();
 		return;
 	}
 
@@ -160,9 +163,11 @@ public class Puyo extends JPanel {
 		g.drawImage(image, 0, 0, this);
 	}
 
+	private static boolean locker = false;
 	class PuyoMover extends Thread implements ActionListener {
 		Timer timer;
 		private int increaseX, increaseY;
+		private Component puyo;
 
 		public void actionPerformed(ActionEvent e) {
 			System.out.println("actionPerformed");
@@ -172,16 +177,18 @@ public class Puyo extends JPanel {
 		private PuyoMover() {
 		}
 
-		public PuyoMover(int x, int y) {
+		public PuyoMover(int x, int y, Component puyo) {
 			increaseX = x;
 			increaseY = y;
+			this.puyo = puyo;
 		}
 
 		public void run() {
-			int incX = increaseX * 5;
-			int incY = increaseY * 5;
+synchronized(puyo) {
+			int incX = increaseX * 10;
+			int incY = increaseY * 10;
 			//System.out.println(Thread.currentThread().getName());
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 5; i++) {
 				x += incX;
 				y += incY;
 				//System.out.println("posY: " + y);
@@ -200,10 +207,9 @@ public class Puyo extends JPanel {
 					e.printStackTrace();
 				}
 			}
-			frameX += increaseX;
-			frameY += increaseY;
+
 			x = frameX * 50;
-			y = frameY * 50;
+			y = frameY * 50;}
 		}
 	}
 }
