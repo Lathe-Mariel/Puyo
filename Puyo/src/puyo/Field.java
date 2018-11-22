@@ -266,8 +266,10 @@ public class Field extends JPanel {
 				}
 			}
 		}
-Puyo[] tempKumiPuyo = new Puyo[2];
+
+		Puyo[] tempKumiPuyo = new Puyo[2];
 		int x1, x2, y1, y2;
+
 		public void run() {
 			if (increaseX2 == 0 && increaseY2 == 0 && increaseY1 == 0) {
 				System.out.println("run return");
@@ -286,18 +288,13 @@ Puyo[] tempKumiPuyo = new Puyo[2];
 				incY1 = increaseY1 * 5;
 				incX2 = increaseX2 * 5;
 				incY2 = increaseY2 * 5;
-				
+
 				x1 = frameX1 * 50;
 				y1 = frameY1 * 50;
 				x2 = frameX2 * 50;
 				y2 = frameY2 * 50;
-
-				//kumiPuyo[0].setPara(x1, y1);
-				//kumiPuyo[1].setPara(x2, y2);
-				//System.out.println(Thread.currentThread().getName());
-				tempKumiPuyo = kumiPuyo;
+				tempKumiPuyo = kumiPuyo;//copy kumiPuyo to protect data, since another thread can destroy the data in key input judge process.
 			}
-
 
 			for (int i = 0; i < 10; i++) {
 				try {
@@ -312,21 +309,18 @@ Puyo[] tempKumiPuyo = new Puyo[2];
 				x2 += incX2;
 				y2 += incY2;
 				System.out.println("x1: " + x1 + ",  y1: " + y1);
-				
+
 				SwingUtilities.invokeLater(new Runnable() {
 
 					public void run() {
 						tempKumiPuyo[0].setPara(x1, y1);
 						tempKumiPuyo[1].setPara(x2, y2);
 
-						//						kumiPuyo[0].setBounds(x1, y1,50,50);
-						//						kumiPuyo[1].setBounds(x2, y2,50,50);
-
 						repaint(5, x1, y1, 50, 55);
 						repaint(5, x2, y2, 50, 55);
 					}
 				});
-				
+
 			}
 
 		}

@@ -53,7 +53,7 @@ public class Puyo extends Component {
 	public Puyo(Field container, int color) {
 		this(color);
 		this.container = container;
-		setBounds(0,0,50,50);
+		setBounds(0, 0, 50, 50);
 	}
 
 	public Puyo(int color) {
@@ -68,9 +68,11 @@ public class Puyo extends Component {
 	void increaseUnderSpace() {
 		underSpace++;
 	}
+
 	public Field getField() {
 		return container;
 	}
+
 	public void setStartFrame(int frameX, int frameY) {
 		this.frameX = frameX;
 		this.frameY = frameY;
@@ -79,12 +81,12 @@ public class Puyo extends Component {
 		setBounds(x, y, 50, 50);
 	}
 
-	void setPara(int x, int y){
+	void setPara(int x, int y) {
 		this.x = x;
 		this.y = y;
-setBounds(x, y, 50,50);
-}
-	
+		setBounds(x, y, 50, 50);
+	}
+
 	void setFrameX(int x) {
 		this.frameX = x;
 		//this.x = frameX * 50;
@@ -134,35 +136,35 @@ setBounds(x, y, 50,50);
 	 * @param x	it can be -1,0,1
 	 * @param y	it can be -1,0,1
 	 */
-//	void moveCommand(int x, int y) {
-//		//System.out.println("x: " + x + "  Y: " + y);
-//		frameX += x;
-//		frameX = frameX<1?1:frameX;
-//		frameX = frameX>6?6:frameX;
-//		frameY += y;
-//		frameY = frameY>14?14:frameY;
-//		//new PuyoMover(x, y, this).start();
-//		PuyoMover pm = new PuyoMover(x, y, this);
-//		pm.run();
-//		return;
-//	}
-//
-//	public synchronized void downStairs() {
-//		System.out.println("downStairs");
-//		for (int roop = 0; roop < underSpace; roop++) {
-//			Boolean isFinish = false;
-//			Thread dropper = new PuyoMover();
-//			new Thread(dropper).start();
-//			try {
-//				while (dropper.isAlive()) {
-//					Thread.sleep(30);
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		underSpace = 0;
-//	}
+	//	void moveCommand(int x, int y) {
+	//		//System.out.println("x: " + x + "  Y: " + y);
+	//		frameX += x;
+	//		frameX = frameX<1?1:frameX;
+	//		frameX = frameX>6?6:frameX;
+	//		frameY += y;
+	//		frameY = frameY>14?14:frameY;
+	//		//new PuyoMover(x, y, this).start();
+	//		PuyoMover pm = new PuyoMover(x, y, this);
+	//		pm.run();
+	//		return;
+	//	}
+	//
+	//	public synchronized void downStairs() {
+	//		System.out.println("downStairs");
+	//		for (int roop = 0; roop < underSpace; roop++) {
+	//			Boolean isFinish = false;
+	//			Thread dropper = new PuyoMover();
+	//			new Thread(dropper).start();
+	//			try {
+	//				while (dropper.isAlive()) {
+	//					Thread.sleep(30);
+	//				}
+	//			} catch (Exception e) {
+	//				e.printStackTrace();
+	//			}
+	//		}
+	//		underSpace = 0;
+	//	}
 
 	public Dimension getPreferredSize() {
 		return new Dimension(50, 50);
@@ -175,63 +177,14 @@ setBounds(x, y, 50,50);
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, 50, 50);
 	}
-public void paint(Graphics g) {
-	g.drawImage(image,  0,  0,  this);
-}
+
+	public void paint(Graphics g) {
+		g.drawImage(image, 0, 0, this);
+	}
 
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, 0, 0, this);
 	}
 
-	private static boolean locker = false;
 
-//	class PuyoMover extends Thread implements ActionListener {
-//		Timer timer;
-//		private int increaseX, increaseY;
-//		private Component puyo;
-//
-//		public void actionPerformed(ActionEvent e) {
-//			System.out.println("actionPerformed");
-//			//notifyAll();
-//		}
-//
-//		private PuyoMover() {
-//		}
-//
-//		public PuyoMover(int x, int y, Component puyo) {
-//			increaseX = x;
-//			increaseY = y;
-//			this.puyo = puyo;
-//		}
-//
-//		public synchronized void run() {
-//			int incX = increaseX * 5;
-//			int incY = increaseY * 5;
-//			setBounds(x, y, 50, 50);
-//			//System.out.println(Thread.currentThread().getName());
-//			for (int i = 0; i < 10; i++) {
-//				x += incX;
-//				y += incY;
-//				//System.out.println("posY: " + y);
-//
-//				setLocation(x,y);
-//
-//				SwingUtilities.invokeLater(new Runnable() {
-//					public void run() {
-//						container.repaint(10, x, y, 50, 50 + y);
-//					}
-//				});
-//
-//				try {
-//					sleep(oneStepIntervalTime);
-//				} catch (Exception e) {
-//					System.out.println("Puyo Dropper Sleep");
-//					e.printStackTrace();
-//				}
-//			}
-//
-//			x = frameX * 50;
-//			y = frameY * 50;
-//		}
-//	}
 }
