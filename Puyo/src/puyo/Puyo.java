@@ -53,6 +53,7 @@ public class Puyo extends JPanel {
 	public Puyo(Field container, int color) {
 		this(color);
 		this.container = container;
+		setBounds(0,0,50,50);
 	}
 
 	public Puyo(int color) {
