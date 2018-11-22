@@ -22,7 +22,7 @@ public class Field extends JPanel {
 	/**
 	 * The time which is interval of one step in puyo 1frame downing process.
 	 */
-	private static int oneStepIntervalTime = 10;
+	private static int oneStepIntervalTime = 5;
 	private NextPuyoPanel npp;
 	boolean inProcessKeyEvent = false;
 	boolean kumiPuyoBroke = false;
@@ -48,12 +48,9 @@ public class Field extends JPanel {
 			puyoArray[i][14].setContainer(this);
 			puyoArray[i][1].setContainer(this);
 			puyoArray[i][0].setContainer(this);
-			puyoArray[i][14].setFrameX(i);
-			puyoArray[i][1].setFrameX(i);
-			puyoArray[i][0].setFrameX(i);
-			puyoArray[i][14].setFrameY(14);
-			puyoArray[i][1].setFrameY(1);
-			puyoArray[i][0].setFrameY(0);
+			puyoArray[i][14].setStartFrame(i, 14);
+			puyoArray[i][1].setStartFrame(i, 1);
+			puyoArray[i][0].setStartFrame(i, 0);
 			add(puyoArray[i][14]);
 			add(puyoArray[i][1]);
 			add(puyoArray[i][0]);
@@ -63,10 +60,8 @@ public class Field extends JPanel {
 			puyoArray[7][i] = new Puyo(6);
 			puyoArray[0][i].setContainer(this);
 			puyoArray[7][i].setContainer(this);
-			puyoArray[0][i].setFrameX(0);
-			puyoArray[7][i].setFrameX(7);
-			puyoArray[0][i].setFrameY(i);
-			puyoArray[7][i].setFrameY(i);
+			puyoArray[0][i].setStartFrame(0, i);
+			puyoArray[7][i].setStartFrame(7, i);
 			add(puyoArray[0][i]);
 			add(puyoArray[7][i]);
 		}
@@ -112,8 +107,8 @@ public class Field extends JPanel {
 	}
 
 	private void createNewTimer(int interval) {
-		if(kumiPuyoDownTimer !=null) {
-		kumiPuyoDownTimer.stop();
+		if (kumiPuyoDownTimer != null) {
+			kumiPuyoDownTimer.stop();
 		}
 		kumiPuyoDownTimer = new Timer(interval, new PuyoListener());
 		kumiPuyoDownTimer.start();
@@ -125,19 +120,9 @@ public class Field extends JPanel {
 		puyo0Movable = true;
 		puyo1Movable = true;
 		add(kumiPuyo[0]);
-		//System.out.println("kumiPuyo0 posY: " + kumiPuyo[0].getY());
+		System.out.println("kumiPuyo0 posY: " + kumiPuyo[0].getY());
 		add(kumiPuyo[1]);
-		//System.out.println("kumiPuyo1 posY: " + kumiPuyo[1].getY());
-		//inProcessKeyEvent = true;
-		//		try {
-		//			new Thread() {
-		//				public void run() {
-		//					pkl.keyHandler();
-		//				}
-		//			}.start();
-		//		} catch (Exception e) {
-		//			e.printStackTrace();
-		//		}
+		System.out.println("kumiPuyo1 posY: " + kumiPuyo[1].getY());
 	}
 
 	public Dimension getPreferredSize() {
@@ -229,13 +214,13 @@ public class Field extends JPanel {
 					increaseY1 = 1;
 				} else {
 					isBreakKumiPuyo = true;
-					createNewTimer(80);
+					createNewTimer(60);
 				}
 				if (puyo1Movable) {
 					increaseY2 = 1;
 				} else {
 					isBreakKumiPuyo = true;
-					createNewTimer(80);
+					createNewTimer(60);
 				}
 			}
 
@@ -281,9 +266,8 @@ public class Field extends JPanel {
 				}
 			}
 		}
-
+Puyo[] tempKumiPuyo = new Puyo[2];
 		int x1, x2, y1, y2;
-
 		public void run() {
 			if (increaseX2 == 0 && increaseY2 == 0 && increaseY1 == 0) {
 				System.out.println("run return");
@@ -294,46 +278,55 @@ public class Field extends JPanel {
 			int incX2;
 			int incY2;
 			synchronized (kumiPuyo) {
+				kumiPuyo[0].setFrameX(frameX1 + increaseX1);
+				kumiPuyo[0].setFrameY(frameY1 + increaseY1);
+				kumiPuyo[1].setFrameX(frameX2 + increaseX2);
+				kumiPuyo[1].setFrameY(frameY2 + increaseY2);
 				incX1 = increaseX1 * 5;
 				incY1 = increaseY1 * 5;
 				incX2 = increaseX2 * 5;
 				incY2 = increaseY2 * 5;
+				
 				x1 = frameX1 * 50;
 				y1 = frameY1 * 50;
 				x2 = frameX2 * 50;
 				y2 = frameY2 * 50;
 
-				//				kumiPuyo[0].setBounds(x1, y1, 50, 50);
-				//				kumiPuyo[1].setBounds(x2, y2, 50, 50);
+				//kumiPuyo[0].setPara(x1, y1);
+				//kumiPuyo[1].setPara(x2, y2);
 				//System.out.println(Thread.currentThread().getName());
-				kumiPuyo[0].setFrameX(frameX1 + increaseX1);
-				kumiPuyo[0].setFrameY(frameY1 + increaseY1);
-				kumiPuyo[1].setFrameX(frameX2 + increaseX2);
-				kumiPuyo[1].setFrameY(frameY2 + increaseY2);
+				tempKumiPuyo = kumiPuyo;
 			}
 
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					for (int i = 0; i < 10; i++) {
-						System.out.println("x1: " + x1 + ",  y1: " + y1);
-						x1 += incX1;
-						y1 += incY1;
-						x2 += incX2;
-						y2 += incY2;
 
-						//kumiPuyo[0].setLocation(x1, y1);
-						//kumiPuyo[1].setLocation(x2, y2);
-
-						repaint(x1, y1, 50, 55);
-						//repaint(5, x2, y2, 50, 55);
-					}
+			for (int i = 0; i < 10; i++) {
+				try {
+					sleep(oneStepIntervalTime);
+				} catch (Exception e) {
+					System.out.println("Puyo Dropper Sleep");
+					e.printStackTrace();
 				}
-			});
-			try {
-				sleep(oneStepIntervalTime);
-			} catch (Exception e) {
-				System.out.println("Puyo Dropper Sleep");
-				e.printStackTrace();
+				System.out.println("x1: " + x1 + ",  y1: " + y1);
+				x1 += incX1;
+				y1 += incY1;
+				x2 += incX2;
+				y2 += incY2;
+				System.out.println("x1: " + x1 + ",  y1: " + y1);
+				
+				SwingUtilities.invokeLater(new Runnable() {
+
+					public void run() {
+						tempKumiPuyo[0].setPara(x1, y1);
+						tempKumiPuyo[1].setPara(x2, y2);
+
+						//						kumiPuyo[0].setBounds(x1, y1,50,50);
+						//						kumiPuyo[1].setBounds(x2, y2,50,50);
+
+						repaint(5, x1, y1, 50, 55);
+						repaint(5, x2, y2, 50, 55);
+					}
+				});
+				
 			}
 
 		}
@@ -401,11 +394,8 @@ public class Field extends JPanel {
 					key = 0;
 				}
 			}
+			key = 0;
 		}
-		//		private void kumiPuyoMove(int x, int y) {
-		//			kumiPuyo[0].moveCommand(x, y);
-		//			kumiPuyo[1].moveCommand(x, y);
-		//		}
 
 		public void keyReleased(KeyEvent e) {
 		}

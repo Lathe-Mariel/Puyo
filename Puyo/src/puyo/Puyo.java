@@ -1,5 +1,6 @@
 package puyo;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -8,9 +9,8 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
 
-public class Puyo extends JPanel {
+public class Puyo extends Component {
 	private Image image;
 	private Field container;
 	/**
@@ -71,11 +71,24 @@ public class Puyo extends JPanel {
 	public Field getField() {
 		return container;
 	}
+	public void setStartFrame(int frameX, int frameY) {
+		this.frameX = frameX;
+		this.frameY = frameY;
+		this.x = frameX * 50;
+		this.y = frameY * 50;
+		setBounds(x, y, 50, 50);
+	}
 
+	void setPara(int x, int y){
+		this.x = x;
+		this.y = y;
+setBounds(x, y, 50,50);
+}
+	
 	void setFrameX(int x) {
 		this.frameX = x;
-		this.x = frameX * 50;
-		setBounds(x, y, 50, 50);
+		//this.x = frameX * 50;
+		//setBounds(x, y, 50, 50);
 	}
 
 	int getFrameX() {
@@ -84,8 +97,8 @@ public class Puyo extends JPanel {
 
 	void setFrameY(int y) {
 		this.frameY = y;
-		this.y = frameY * 50;
-		setBounds(x, y, 50, 50);
+		//this.y = frameY * 50;
+		//setBounds(x, y, 50, 50);
 		//System.out.println("Puyo position: " + this.y);
 	}
 
@@ -162,6 +175,9 @@ public class Puyo extends JPanel {
 	public Rectangle getBounds() {
 		return new Rectangle(x, y, 50, 50);
 	}
+public void paint(Graphics g) {
+	g.drawImage(image,  0,  0,  this);
+}
 
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, 0, 0, this);
