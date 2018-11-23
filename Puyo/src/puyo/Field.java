@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -26,8 +27,9 @@ public class Field extends JPanel {
 	private NextPuyoPanel npp;
 	boolean inProcessKeyEvent = false;
 	boolean kumiPuyoBroke = false;
-	private int key = 0;
+	private boolean keyProcess = false;
 	private PuyoKeyListener pkl;
+	long keyCheckIntervalTime = 60;
 
 	void setKeyListener(PuyoKeyListener pkl) {
 		this.pkl = pkl;
@@ -327,97 +329,107 @@ public class Field extends JPanel {
 	}
 
 	public class PuyoKeyListener implements KeyListener {
-		public void keyPressed(KeyEvent e) {
-			new Thread() {
+		private boolean keyState[];
+		private boolean doubleRotationLock;
+
+		public PuyoKeyListener() {
+			keyState = new boolean[4]; //left,right,down,rotate
+			new java.util.Timer().schedule(new TimerTask() {
 				public void run() {
-					keyPressHandler(e);
+					keyPressHandler();
 				}
-			}.start();
+			}, 500, keyCheckIntervalTime);
 		}
 
-		private void keyPressHandler(KeyEvent e) {
-			System.out.println(1);
-			if (key != 0 || isBreakKumiPuyo) {
-				System.out.println("return: " + key);
+		@Override
+		public void keyPressed(KeyEvent e) {
+			int key = e.getKeyCode();
+			switch (key) {
+			case KeyEvent.VK_RIGHT:
+				keyState[1] = true;
+				break;
+			case KeyEvent.VK_LEFT:
+				keyState[0] = true;
+				break;
+			case KeyEvent.VK_DOWN:
+				keyState[2] = true;
+				break;
+			case KeyEvent.VK_DECIMAL:
+				keyState[3] = true;
+				break;
+			case KeyEvent.VK_A:
+				keyState[3] = true;
+				break;
+			default:
+				break;
+			}
+			//keyPressHandler(e);
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			int key = e.getKeyCode();
+			switch (key) {
+			case KeyEvent.VK_RIGHT:
+				keyState[1] = false;
+				break;
+			case KeyEvent.VK_LEFT:
+				keyState[0] = false;
+				break;
+			case KeyEvent.VK_DOWN:
+				keyState[2] = false;
+				break;
+			case KeyEvent.VK_DECIMAL:
+				keyState[3] = false;
+				break;
+			case KeyEvent.VK_A:
+				keyState[3] = false;
+				doubleRotationLock = false;
+				break;
+			default:
+				break;
+			}
+		}
+
+		private void keyPressHandler() {
+			//System.out.println("keyPressHandler");
+			if (keyProcess || isBreakKumiPuyo) {
+				System.out.println("return: 1");
 				return;
 			}
+			//keyProcess = false;
 			synchronized (kumiPuyo) {
-				key = e.getKeyCode();
-				System.out.println("keypressed");
-				if (key == KeyEvent.VK_RIGHT) {
-					System.out.println(key);
+				if (keyState[1]) {
 					PuyoMover pm = new PuyoMover();
 					pm.toRight();
 					pm.start();
-					try {
-						//pm.join();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					key = 0;
-				} else if (key == KeyEvent.VK_LEFT) {
+				//	keyProcess = false;
+				} else if (keyState[0]) {
 					PuyoMover pm = new PuyoMover();
 					pm.toLeft();
 					pm.start();
-					try {
-						//pm.join();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					key = 0;
-				} else if (key == KeyEvent.VK_DOWN) {
-					System.out.println(key);
+				//	keyProcess = false;
+				} else if (keyState[2]) {
 					PuyoMover pm = new PuyoMover();
 					pm.toDown();
 					pm.start();
-					try {
-						//pm.join();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					key = 0;
-				} else if (key == KeyEvent.VK_DECIMAL || key == KeyEvent.VK_A) {
+				//	keyProcess = false;
+				} else if (keyState[3]) {
+					if(doubleRotationLock)return;
 					PuyoMover pm = new PuyoMover();
+					doubleRotationLock = true;
 					pm.toRotate();
 					pm.start();
-					try {
-						//pm.join();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					key = 0;
+				//	keyProcess = false;
 				}
 			}
-			key = 0;
+			//keyProcess = false;
 		}
 
-		public void keyReleased(KeyEvent e) {
-		}
-
+		@Override
 		public void keyTyped(KeyEvent e) {
-
 		}
 
-		//		void keyHandler() {
-		//			while (inProcessKeyEvent) {
-		//				if (key == KeyEvent.VK_RIGHT) {
-		//					key = 0;
-		//					PuyoMover pm = new PuyoMover();
-		//					pm.toRight();
-		//					new Thread(pm).start();
-		//				} else if (key == KeyEvent.VK_LEFT) {
-		//					key = 0;
-		//					PuyoMover pm = new PuyoMover();
-		//					pm.toLeft();
-		//					new Thread(pm).start();
-		//				} else if (key == KeyEvent.VK_DECIMAL || key == KeyEvent.VK_A) {
-		//					key = 0;
-		//					PuyoMover pm = new PuyoMover();
-		//					pm.toRotate();
-		//					new Thread(pm).start();
-		//				}
-		//			}
-		//		}
 	}
 
 	class PuyoListener implements ActionListener {
@@ -428,11 +440,6 @@ public class Field extends JPanel {
 				PuyoMover pm = new PuyoMover();
 				pm.toDown();
 				pm.start();
-				try {
-					//pm.join();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
 			}
 		}
 	}
