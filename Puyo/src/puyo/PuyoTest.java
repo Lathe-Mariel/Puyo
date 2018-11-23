@@ -43,7 +43,6 @@ public class PuyoTest extends JFrame {
 		field0.init();
 		PuyoKeyListener pkl = field0.new PuyoKeyListener();
 		addKeyListener(pkl);
-		field0.setKeyListener(pkl);
 		
 		npp = new NextPuyoPanel(field0);
 		field0.setNPP(npp);

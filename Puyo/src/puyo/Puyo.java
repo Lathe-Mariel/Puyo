@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
@@ -14,7 +15,7 @@ public class Puyo extends Component {
 	private Image image;
 	private Field container;
 	/**
-	 * If puyo which is under this puyo, it will increment this variable.
+	 * When puyo which is under this puyo desappears, it will increment this variable.
 	 */
 	private int underSpace = 0;
 	/**
@@ -26,13 +27,12 @@ public class Puyo extends Component {
 	 * Position in the field by fram(6 x 12)
 	 */
 	private int frameX = 0, frameY = 0;
+	/**
+	 * this number refers this puyo's color.
+	 */
 	private int colorNumber;
 	private static Image[] puyoImageArray; //redPuyoImage, greenPuyoImage, bluePuyoImage, yellowPuyoImage, yellowGreenPuyoImage, grayPuyoImage;
-
-	/**
-	 * How many puyos are connected including this puyo.
-	 */
-	private int connectNumber = 1;
+	private LinkedPuyos linkedPuyos = null;
 
 	static {
 		try {
@@ -59,6 +59,39 @@ public class Puyo extends Component {
 	public Puyo(int color) {
 		this.colorNumber = color;
 		this.image = puyoImageArray[color];
+	}
+
+	void setLink(LinkedPuyos linkedPuyos) {
+		this.linkedPuyos = linkedPuyos;
+	}
+
+	LinkedPuyos getLink() {
+		return linkedPuyos;
+	}
+
+	void connectPuyos(Puyo second) {
+		if (linkedPuyos == null && second.getLink() == null) {
+			linkedPuyos = new LinkedPuyos(this);
+			second.setLink(linkedPuyos.add(second));
+		} else if (linkedPuyos == null) {
+			if (second.getLink().puyos.contains(this)) {
+				linkedPuyos = second.getLink();
+				return;
+			}
+			linkedPuyos = second.getLink().add(this);
+		} else if (second.getLink() == null) {
+			linkedPuyos.add(second);
+			second.setLink(linkedPuyos);
+		} else {
+			System.out.println("puyoLink junction");
+			Iterator<Puyo> i = linkedPuyos.iterator();
+			LinkedPuyos escape = linkedPuyos;
+			for (; i.hasNext();) {
+				Puyo processPuyo = i.next();
+				processPuyo.setLink(second.getLink().add(processPuyo));
+			}
+			LinkedPuyos.master.remove(escape);
+		}
 	}
 
 	public int getUnderSpace() {
@@ -185,6 +218,5 @@ public class Puyo extends Component {
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, 0, 0, this);
 	}
-
 
 }
