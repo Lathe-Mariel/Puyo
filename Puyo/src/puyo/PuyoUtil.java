@@ -19,9 +19,9 @@ static void addNextPuyoPanel(NextPuyoPanel npp) {
 		int color0 = (int) (Math.random() * colorNumbers);
 		int color1 = (int) (Math.random() * colorNumbers);
 		newPuyos[0] = new Puyo(color0);
-		newPuyos[0].setStartFrame(3,1);
+		newPuyos[0].setStartFrame(3,2);
 		newPuyos[1] = new Puyo(color1);
-		newPuyos[1].setStartFrame(3,0);
+		newPuyos[1].setStartFrame(3,1);
 		for(Iterator<NextPuyoPanel> i = nextPuyoPanels.iterator(); i.hasNext(); ) {
 			i.next().insertPuyos(newPuyos);
 		}

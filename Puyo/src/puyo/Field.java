@@ -33,27 +33,19 @@ public class Field extends JPanel {
 
 	public Field() {
 		setLayout(null);
-		puyoArray = new Puyo[8][15];//including brim
+		puyoArray = new Puyo[8][16];//including brim
 
 		setBackground(Color.orange);
 	}
 
 	void init() {
 		for (int i = 0; i < 8; i++) {
-			puyoArray[i][14] = new Puyo(6);
-			puyoArray[i][1] = new Puyo(6);
-			puyoArray[i][0] = new Puyo(6);
-			puyoArray[i][14].setContainer(this);
-			puyoArray[i][1].setContainer(this);
-			puyoArray[i][0].setContainer(this);
-			puyoArray[i][14].setStartFrame(i, 14);
-			puyoArray[i][1].setStartFrame(i, 1);
-			puyoArray[i][0].setStartFrame(i, 0);
-			add(puyoArray[i][14]);
-			add(puyoArray[i][1]);
-			add(puyoArray[i][0]);
+			puyoArray[i][15] = new Puyo(6);
+			puyoArray[i][15].setContainer(this);
+			puyoArray[i][15].setStartFrame(i, 15);
+			add(puyoArray[i][15]);
 		}
-		for (int i = 1; i < 14; i++) {
+		for (int i = 1; i < 15; i++) {
 			puyoArray[0][i] = new Puyo(6);
 			puyoArray[7][i] = new Puyo(6);
 			puyoArray[0][i].setContainer(this);
@@ -90,7 +82,8 @@ public class Field extends JPanel {
 	}
 
 	void startNewPuyo() {
-		createNewTimer(800);
+		if(puyoArray[3][3] != null) { keyProcess = true;
+		return;}
 		kumiPuyo = npp.pop();
 		puyo0Movable = true;
 		puyo1Movable = true;
@@ -98,12 +91,13 @@ public class Field extends JPanel {
 		System.out.println("kumiPuyo0 posY: " + kumiPuyo[0].getY());
 		add(kumiPuyo[1]);
 		System.out.println("kumiPuyo1 posY: " + kumiPuyo[1].getY());
+		createNewTimer(800);
 	}
 
 	private synchronized void surveyLinkedPuyos(Puyo puyo) {
 		int currentX = puyo.getFrameX();
 		int currentY = puyo.getFrameY();
-		
+
 		Puyo rightPuyo = puyoArray[currentX + 1][currentY];
 		if (rightPuyo != null && puyo.getColorNumber() == rightPuyo.getColorNumber()) {
 			System.out.println("right");
@@ -115,43 +109,57 @@ public class Field extends JPanel {
 			System.out.println("left");
 			puyo.connectPuyos(leftPuyo);
 		}
-		
+
 		Puyo lowerPuyo = puyoArray[currentX][currentY + 1];
 		if (lowerPuyo != null && puyo.getColorNumber() == lowerPuyo.getColorNumber()) {
 			System.out.println("lower");
 			puyo.connectPuyos(lowerPuyo);
 		}
-		
+
 		Puyo upperPuyo = puyoArray[currentX][currentY - 1];
 		if (upperPuyo != null && puyo.getColorNumber() == upperPuyo.getColorNumber()) {
 			System.out.println("upper");
 			puyo.connectPuyos(upperPuyo);
 		}
-		
+	}
+
+	private void notifyDisappeared(Puyo upperPuyo) {
+		if(upperPuyo == null)return ;
+		upperPuyo.increaseUnderSpace();
+		notifyDisappeared(puyoArray[upperPuyo.getFrameX()][upperPuyo.getFrameY() - 1]);
+		return ;
 	}
 
 	/**
 	 * Disappearing if exists more than four linked puyos.
 	*/
 	public void processDisappearing() {
+		boolean hasDisappear = false;
 		System.out.println("processDisapeearing()");
 		for (int i = 0; i < LinkedPuyos.master.size(); i++) {
 			LinkedPuyos currentLink = LinkedPuyos.master.get(i);
 			if (currentLink.isDisappearable()) {
+				hasDisappear = true;
 				LinkedPuyos.master.remove(currentLink);
+				i--;
 				//System.out.println("disappearing process");
 				for (Iterator<Puyo> j = currentLink.iterator(); j.hasNext();) {
 					Puyo p = j.next();
-					remove(puyoArray[p.getFrameX()][p.getFrameY()]);
+					int disappearX = p.getFrameX();
+					int disappearY = p.getFrameY();
+					remove(puyoArray[disappearX][disappearY]);
+					notifyDisappeared(puyoArray[disappearX][disappearY -1]);
 					puyoArray[p.getFrameX()][p.getFrameY()] = null;
 					//System.out.println("Disappearing " + p.getFrameX() + " : " + p.getFrameY());
 				}
 				currentLink = null;
 			}
 		}
-
-		repaint();
-		processAllDown();
+		if(hasDisappear) {
+			repaint();
+			processAllDown();
+		}
+		startNewPuyo();
 	}
 
 	/**
@@ -159,18 +167,17 @@ public class Field extends JPanel {
 	 */
 	public void processAllDown() {
 		//System.out.println("processAllDown");
-		for (int i = 12; i > 1; i--) {
-			for (int j = 0; j < 6; j++) {
+		for (int i = 14; i > 0; i--) {
+			for (int j = 1; j < 7; j++) {
 				if (puyoArray[j][i] == null || puyoArray[j][i].getUnderSpace() == 0)
 					continue;
 				//puyoArray[j][i].downStairs();
 			}
 		}
-		startNewPuyo();
 	}
 
 	public Dimension getPreferredSize() {
-		return new Dimension(400, 800);
+		return new Dimension(400, 850);
 	}
 
 	boolean puyo0Movable = true;

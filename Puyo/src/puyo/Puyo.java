@@ -84,6 +84,7 @@ public class Puyo extends Component {
 			second.setLink(linkedPuyos);
 		} else {
 			System.out.println("puyoLink junction");
+			if(linkedPuyos == second.getLink())return;
 			Iterator<Puyo> i = linkedPuyos.iterator();
 			LinkedPuyos escape = linkedPuyos;
 			for (; i.hasNext();) {
