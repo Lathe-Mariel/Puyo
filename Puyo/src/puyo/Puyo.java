@@ -94,13 +94,28 @@ public class Puyo extends Component {
 			LinkedPuyos.master.remove(escape);
 		}
 	}
-
+	
+	void disConnectPuyos(Puyo second) {
+		if(linkedPuyos == null)return;
+		if(linkedPuyos.puyos.size() > 2) {
+			linkedPuyos.remove(this);
+			linkedPuyos = null;
+		}else {
+			LinkedPuyos.master.remove(linkedPuyos);
+			linkedPuyos.puyos.get(0).setLink(null);
+			linkedPuyos.puyos.get(1).setLink(null);
+		}
+	}
+	public void resetUnderSpace() {
+		underSpace = 0;
+	}
 	public int getUnderSpace() {
 		return underSpace;
 	}
 
 	void increaseUnderSpace() {
 		underSpace++;
+		System.out.println("Puyo X: " + frameX + "  Y: " + frameY + "  underSapce: " + underSpace);
 	}
 
 	public Field getField() {
@@ -114,7 +129,11 @@ public class Puyo extends Component {
 		this.y = frameY * 50;
 		setBounds(x, y, 50, 50);
 	}
-
+/**
+ * Position set by dot
+ * @param x	X position should be described by dot
+ * @param y	Y position should be described by dot
+ */
 	void setPara(int x, int y) {
 		this.x = x;
 		this.y = y;
