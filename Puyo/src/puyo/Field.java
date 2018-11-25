@@ -34,9 +34,8 @@ public class Field extends JPanel {
 	 */
 	private static int oneStepIntervalTime = 5;
 	private NextPuyoPanel npp;
-	boolean inProcessKeyEvent = false;
 	boolean kumiPuyoBroke = false;
-	private boolean keyProcess = false;
+	private boolean keyInputDisable = false;
 	long keyCheckIntervalTime = 60;
 	ArrayList<Puyo> droppedPuyos;
 	Image[] imageArray;
@@ -47,7 +46,7 @@ public class Field extends JPanel {
 		puyoArray = new Puyo[8][16];//including brim
 
 		setBackground(Color.orange);
-		
+
 		try {
 			imageArray = new Image[7];
 			imageArray[0] = ImageIO.read(new File("java.jpg"));
@@ -81,9 +80,40 @@ public class Field extends JPanel {
 			add(puyoArray[7][i]);
 		}
 		JPanel topPanel = new TopPanel();
-		topPanel.setSize(new Dimension(400,150));
+		topPanel.setSize(new Dimension(400, 150));
 		add(topPanel);
 		setComponentZOrder(topPanel, 0);
+	}
+
+	public void gameRoop() {
+
+		while(processDisappearing()) {
+			Thread t = new Thread() {
+				public void run() {
+					processAllDown();
+				}
+			};
+			t.start();
+			try {
+				t.join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			for (Iterator<Puyo> i = droppedPuyos.iterator(); i.hasNext();) {
+				surveyLinkedPuyos(i.next());
+			}
+			droppedPuyos.clear();
+		}
+
+		if (puyoArray[3][3] != null) {
+			keyInputDisable = true;
+			System.out.println("Game Over");
+		} else {
+
+			startNewPuyo();
+		}
+
 	}
 
 	public void setNPP(NextPuyoPanel npp) {
@@ -96,9 +126,8 @@ public class Field extends JPanel {
 	}
 
 	public boolean isOptimizedDrawingEnabled() {
-        return false;
-    }
-
+		return false;
+	}
 
 	boolean isThereNoPuyo(int frameX, int frameY) {
 		//System.out.println("frameX: " + frameX + "    frameY: " + frameY);
@@ -117,11 +146,6 @@ public class Field extends JPanel {
 	}
 
 	void startNewPuyo() {
-		if (puyoArray[3][3] != null) {
-			keyProcess = true;
-			System.out.println("Game Over");
-			return;
-		}
 		kumiPuyo = npp.pop();
 		puyo0Movable = true;
 		puyo1Movable = true;
@@ -174,10 +198,8 @@ public class Field extends JPanel {
 	/**
 	 * Disappearing if exists more than four linked puyos.
 	*/
-	public void processDisappearing() {
-		boolean hasDisappear = false;
-		do {
-			hasDisappear = false;
+	public boolean processDisappearing() {
+			boolean hasDisappear = false;
 			System.out.println("processDisapeearing()");
 			for (int i = 0; i < LinkedPuyos.master.size(); i++) {
 				LinkedPuyos currentLink = LinkedPuyos.master.get(i);
@@ -202,22 +224,7 @@ public class Field extends JPanel {
 				}
 			}
 			repaint();
-			if (!hasDisappear) {
-				startNewPuyo();
-				return;
-			}
-
-			Thread t = new Thread() {
-				public void run() {
-					processAllDown();
-				}
-			};
-			t.start();
-			try{
-			t.join();
-			}catch(Exception e) {e.printStackTrace();}
-
-		} while (true);
+			return hasDisappear;
 	}
 
 	/**
@@ -248,10 +255,6 @@ public class Field extends JPanel {
 			e.printStackTrace();
 		}
 		executor.shutdown();
-		for (Iterator<Puyo> i = droppedPuyos.iterator(); i.hasNext();) {
-			surveyLinkedPuyos(i.next());
-		}
-		droppedPuyos.clear();
 
 	}
 
@@ -371,11 +374,10 @@ public class Field extends JPanel {
 				//System.out.println("kumiPuyo[1] -> puyoArray");
 			}
 			if (puyo0Movable == false && puyo1Movable == false) {
-				inProcessKeyEvent = false;
 				kumiPuyoDownTimer.stop();
 				isBreakKumiPuyo = false;
-
-				processDisappearing();
+				gameRoop();
+				//processDisappearing();
 			}
 		}
 
@@ -528,7 +530,7 @@ public class Field extends JPanel {
 
 		private void keyPressHandler() {
 			//System.out.println("keyPressHandler");
-			if (keyProcess || isBreakKumiPuyo) {
+			if (keyInputDisable || isBreakKumiPuyo) {
 				//System.out.println("return: 1");
 				return;
 			}
