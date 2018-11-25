@@ -53,7 +53,7 @@ public class Field extends JPanel {
 		try {
 			imageArray = new Image[7];
 			imageArray[0] = ImageIO.read(new File("java.jpg"));
-			imageArray[1] = ImageIO.read(new File("green.png"));
+			imageArray[1] = ImageIO.read(new File("sutenaide.jpg"));
 			imageArray[2] = ImageIO.read(new File("blue.png"));
 			imageArray[3] = ImageIO.read(new File("yellow.png"));
 			imageArray[4] = ImageIO.read(new File("purple.png"));
@@ -87,6 +87,12 @@ public class Field extends JPanel {
 		add(topPanel);
 		setComponentZOrder(topPanel, 0);
 
+		MiddlePanel middlePanel = new MiddlePanel();
+		middlePanel.setBounds(0,151,400,400);
+		add(middlePanel);
+		setComponentZOrder(middlePanel, 0);
+		middlePanel.selectImageNumber(1);
+		
 		listener = new PuyoKeyListener();
 		container.addKeyListener(listener);
 	}
