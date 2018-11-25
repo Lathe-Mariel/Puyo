@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -39,8 +40,10 @@ public class Field extends JPanel {
 	long keyCheckIntervalTime = 60;
 	ArrayList<Puyo> droppedPuyos;
 	Image[] imageArray;
+	JFrame container;
 
-	public Field() {
+	public Field(JFrame container) {
+		this.container = container;
 		setLayout(null);
 		droppedPuyos = new ArrayList<Puyo>();
 		puyoArray = new Puyo[8][16];//including brim
@@ -83,11 +86,23 @@ public class Field extends JPanel {
 		topPanel.setSize(new Dimension(400, 150));
 		add(topPanel);
 		setComponentZOrder(topPanel, 0);
+
+		listener = new PuyoKeyListener();
+		container.addKeyListener(listener);
 	}
 
-	public void gameRoop() {
+	KeyListener listener;
 
-		while(processDisappearing()) {
+	public void gameRoop() {
+		System.out.println("gameRoop");
+		while (processDisappearing()) {
+			repaint();
+			try {
+				Thread.sleep(100);
+			} catch (Exception ex0) {
+				ex0.printStackTrace();
+			}
+
 			Thread t = new Thread() {
 				public void run() {
 					processAllDown();
@@ -99,7 +114,7 @@ public class Field extends JPanel {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			for (Iterator<Puyo> i = droppedPuyos.iterator(); i.hasNext();) {
 				surveyLinkedPuyos(i.next());
 			}
@@ -110,8 +125,14 @@ public class Field extends JPanel {
 			keyInputDisable = true;
 			System.out.println("Game Over");
 		} else {
-
-			startNewPuyo();
+			System.out.println(1);
+			kumiPuyo = npp.pop();
+			puyo0Movable = true;
+			puyo1Movable = true;
+			add(kumiPuyo[0]);
+			add(kumiPuyo[1]);
+			createNewTimer(800);
+			keyInputDisable = false;
 		}
 
 	}
@@ -141,19 +162,12 @@ public class Field extends JPanel {
 		if (kumiPuyoDownTimer != null) {
 			kumiPuyoDownTimer.stop();
 		}
-		kumiPuyoDownTimer = new Timer(interval, new PuyoListener());
+		kumiPuyoDownTimer = new Timer(interval, (ActionListener) listener);
 		kumiPuyoDownTimer.start();
 	}
 
 	void startNewPuyo() {
-		kumiPuyo = npp.pop();
-		puyo0Movable = true;
-		puyo1Movable = true;
-		add(kumiPuyo[0]);
-		System.out.println("kumiPuyo0 posY: " + kumiPuyo[0].getY());
-		add(kumiPuyo[1]);
-		System.out.println("kumiPuyo1 posY: " + kumiPuyo[1].getY());
-		createNewTimer(800);
+
 	}
 
 	private synchronized void surveyLinkedPuyos(Puyo puyo) {
@@ -199,32 +213,32 @@ public class Field extends JPanel {
 	 * Disappearing if exists more than four linked puyos.
 	*/
 	public boolean processDisappearing() {
-			boolean hasDisappear = false;
-			System.out.println("processDisapeearing()");
-			for (int i = 0; i < LinkedPuyos.master.size(); i++) {
-				LinkedPuyos currentLink = LinkedPuyos.master.get(i);
-				if (currentLink.isDisappearable()) {
-					hasDisappear = true;
-					LinkedPuyos.master.remove(currentLink);
-					i--;
-					//System.out.println("disappearing process");
-					for (Iterator<Puyo> j = currentLink.iterator(); j.hasNext();) {
-						Puyo p = j.next();
-						int disappearX = p.getFrameX();
-						int disappearY = p.getFrameY();
-						remove(puyoArray[disappearX][disappearY]);
-						puyoArray[disappearX][disappearY] = null;
-						notifyDisappeared(p);
-						p.disConnectPuyos(puyoArray[disappearX + 1][disappearY]);
-						p.disConnectPuyos(puyoArray[disappearX - 1][disappearY]);
+		boolean hasDisappear = false;
+		System.out.println("processDisapeearing()");
+		for (int i = 0; i < LinkedPuyos.master.size(); i++) {
+			LinkedPuyos currentLink = LinkedPuyos.master.get(i);
+			if (currentLink.isDisappearable()) {
+				hasDisappear = true;
+				LinkedPuyos.master.remove(currentLink);
+				i--;
+				//System.out.println("disappearing process");
+				for (Iterator<Puyo> j = currentLink.iterator(); j.hasNext();) {
+					Puyo p = j.next();
+					int disappearX = p.getFrameX();
+					int disappearY = p.getFrameY();
+					remove(puyoArray[disappearX][disappearY]);
+					puyoArray[disappearX][disappearY] = null;
+					notifyDisappeared(p);
+					p.disConnectPuyos(puyoArray[disappearX + 1][disappearY]);
+					p.disConnectPuyos(puyoArray[disappearX - 1][disappearY]);
 
-						//System.out.println("Disappearing " + p.getFrameX() + " : " + p.getFrameY());
-					}
-					currentLink = null;
+					//System.out.println("Disappearing " + p.getFrameX() + " : " + p.getFrameY());
 				}
+				currentLink = null;
 			}
-			repaint();
-			return hasDisappear;
+		}
+		//repaint();
+		return hasDisappear;
 	}
 
 	/**
@@ -264,7 +278,6 @@ public class Field extends JPanel {
 
 	boolean puyo0Movable = true;
 	boolean puyo1Movable = true;
-	boolean isBreakKumiPuyo = false;
 
 	class PuyoMover extends Thread {
 		Timer timer;
@@ -324,6 +337,8 @@ public class Field extends JPanel {
 		}
 
 		void toDown() {
+			if (keyInputDisable || (puyo0Movable == false && puyo1Movable == false)) {
+				return;}
 			if (frameY2 < frameY1 && frameX1 == frameX2) {//kumiPuyo state is vertical, and kumiPuyo[0] is upper side. &kumi puyo is still kumi(not splited).
 				puyo0Movable = isThereNoPuyo(frameX1, frameY1 + 1);
 				if (puyo0Movable) {
@@ -343,41 +358,47 @@ public class Field extends JPanel {
 			} else {//if kumiPuyo state is horizontal
 				puyo0Movable = isThereNoPuyo(frameX1, frameY1 + 1);// is there space under the kumiPuyo[0].
 				puyo1Movable = isThereNoPuyo(frameX2, frameY2 + 1);// is there space under the kumiPuyo[1].
-				if (puyo0Movable) {
+				if (puyo0Movable && puyo1Movable) {
 					increaseY1 = 1;
-				} else {
-					isBreakKumiPuyo = true;
-					createNewTimer(60);
-				}
-				if (puyo1Movable) {
 					increaseY2 = 1;
+				} else if (puyo1Movable) {
+					keyInputDisable = true;
+					while (puyoArray[frameX2][++frameY2] == null) {
+						kumiPuyo[1].increaseUnderSpace();
+					}
+					frameY2--;
+					new PuyoDropper2(kumiPuyo[1], null).run();
+					puyo1Movable = false;
+
 				} else {
-					isBreakKumiPuyo = true;
-					createNewTimer(60);
+					keyInputDisable = true;
+					while (puyoArray[frameX1][++frameY1] == null) {
+						kumiPuyo[0].increaseUnderSpace();
+					}
+					frameY1--;
+					new PuyoDropper2(kumiPuyo[0], null).run();
+					puyo0Movable = false;
 				}
 			}
-
 			if (puyo0Movable == false) {
-				if (puyoArray[frameX1][frameY1] == null) {
-					puyoArray[frameX1][frameY1] = kumiPuyo[0];
-					surveyLinkedPuyos(kumiPuyo[0]);
-				}
+
+				puyoArray[frameX1][frameY1] = kumiPuyo[0];
+				surveyLinkedPuyos(kumiPuyo[0]);
+
 				//kumiPuyoBroke = true;
 				//System.out.println("kumiPuyo[0] -> puyoArray:X " + frameX1 + " :Y " +frameY1);
 			}
 			if (puyo1Movable == false) {
-				if (puyoArray[frameX2][frameY2] == null) {
-					puyoArray[frameX2][frameY2] = kumiPuyo[1];
-					surveyLinkedPuyos(kumiPuyo[1]);
-				}
+				puyoArray[frameX2][frameY2] = kumiPuyo[1];
+				surveyLinkedPuyos(kumiPuyo[1]);
 				//kumiPuyoBroke = true;
 				//System.out.println("kumiPuyo[1] -> puyoArray");
 			}
 			if (puyo0Movable == false && puyo1Movable == false) {
+				System.out.println(3);
 				kumiPuyoDownTimer.stop();
-				isBreakKumiPuyo = false;
+				keyInputDisable = true;
 				gameRoop();
-				//processDisappearing();
 			}
 		}
 
@@ -403,6 +424,7 @@ public class Field extends JPanel {
 					increaseY2 = -1;
 				}
 			}
+			allKeyLock = false;
 		}
 
 		Puyo[] tempKumiPuyo = new Puyo[2];
@@ -411,6 +433,7 @@ public class Field extends JPanel {
 		public void run() {
 			if (increaseX2 == 0 && increaseY2 == 0 && increaseY1 == 0) {
 				//System.out.println("run return");
+				allKeyLock = false;
 				return;
 			}
 			int incX1;
@@ -460,16 +483,16 @@ public class Field extends JPanel {
 				});
 
 			}
-
+allKeyLock =false;
 		}
 	}
-
-	public class PuyoKeyListener implements KeyListener {
+boolean allKeyLock;
+	public class PuyoKeyListener implements KeyListener, ActionListener {
 		private boolean keyState[];
 		private boolean doubleRotationLock;
 
 		public PuyoKeyListener() {
-			keyState = new boolean[4]; //left,right,down,rotate
+			keyState = new boolean[5]; //left,right,down,rotate,autoDown
 			new java.util.Timer().schedule(new TimerTask() {
 				public void run() {
 					keyPressHandler();
@@ -529,39 +552,47 @@ public class Field extends JPanel {
 		}
 
 		private void keyPressHandler() {
-			//System.out.println("keyPressHandler");
-			if (keyInputDisable || isBreakKumiPuyo) {
-				//System.out.println("return: 1");
+			if (keyInputDisable)
 				return;
-			}
-			//keyProcess = false;
 			synchronized (kumiPuyo) {
-				if (keyState[1]) {
-					PuyoMover pm = new PuyoMover();
-					pm.toRight();
-					pm.start();
-					//	keyProcess = false;
-				} else if (keyState[0]) {
-					PuyoMover pm = new PuyoMover();
-					pm.toLeft();
-					pm.start();
-					//	keyProcess = false;
-				} else if (keyState[2]) {
+				if(allKeyLock)return;
+				allKeyLock=true;
+				if (keyState[4]) {
 					PuyoMover pm = new PuyoMover();
 					pm.toDown();
 					pm.start();
-					//	keyProcess = false;
+					keyState[4] = false;
 				} else if (keyState[3]) {
-					if (doubleRotationLock)
-						return;
+					if (doubleRotationLock) {
+						allKeyLock = false;
+						return;}
 					PuyoMover pm = new PuyoMover();
 					doubleRotationLock = true;
 					pm.toRotate();
 					pm.start();
-					//	keyProcess = false;
+				} else if (keyState[1]) {
+					PuyoMover pm = new PuyoMover();
+					pm.toRight();
+					pm.start();
+				} else if (keyState[0]) {
+					PuyoMover pm = new PuyoMover();
+					pm.toLeft();
+					pm.start();
+				} else if (keyState[2]) {
+					PuyoMover pm = new PuyoMover();
+					pm.toDown();
+					pm.start();
+
+				}else {
+					allKeyLock=false;
 				}
 			}
 			//keyProcess = false;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			//System.out.println("timer down");
+			keyState[4] = true;
 		}
 
 		@Override
@@ -590,7 +621,7 @@ public class Field extends JPanel {
 
 			for (int i = 0; i < 10 * steps; i++) {
 				try {
-					sleep(20);
+					sleep(12);
 				} catch (Exception e) {
 					System.out.println("all Puyo Dropper Sleep");
 					e.printStackTrace();
@@ -608,19 +639,9 @@ public class Field extends JPanel {
 			}
 			puyo.resetUnderSpace();
 			puyo.setFrameY(originY + steps);
+			if (latch == null)
+				return;
 			latch.countDown();
-		}
-	}
-
-	class PuyoListener implements ActionListener {
-		//boolean puyo0Movable = true, puyo1Movable = true;
-		public void actionPerformed(ActionEvent e) {
-			//System.out.println("timer down");
-			synchronized (kumiPuyo) {
-				PuyoMover pm = new PuyoMover();
-				pm.toDown();
-				pm.start();
-			}
 		}
 	}
 }
