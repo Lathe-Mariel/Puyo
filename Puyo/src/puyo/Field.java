@@ -3,10 +3,13 @@ package puyo;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TimerTask;
@@ -14,6 +17,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -35,6 +39,7 @@ public class Field extends JPanel {
 	private boolean keyProcess = false;
 	long keyCheckIntervalTime = 60;
 	ArrayList<Puyo> droppedPuyos;
+	Image[] imageArray;
 
 	public Field() {
 		setLayout(null);
@@ -42,6 +47,20 @@ public class Field extends JPanel {
 		puyoArray = new Puyo[8][16];//including brim
 
 		setBackground(Color.orange);
+		
+		try {
+			imageArray = new Image[7];
+			imageArray[0] = ImageIO.read(new File("java.jpg"));
+			imageArray[1] = ImageIO.read(new File("green.png"));
+			imageArray[2] = ImageIO.read(new File("blue.png"));
+			imageArray[3] = ImageIO.read(new File("yellow.png"));
+			imageArray[4] = ImageIO.read(new File("purple.png"));
+			imageArray[5] = ImageIO.read(new File("gray.png"));
+			imageArray[6] = ImageIO.read(new File("rock.png"));
+		} catch (IOException e) {
+			System.out.println("Error from static block, It's Puyo images loading process");
+			e.printStackTrace();
+		}
 	}
 
 	void init() {
@@ -61,6 +80,10 @@ public class Field extends JPanel {
 			add(puyoArray[0][i]);
 			add(puyoArray[7][i]);
 		}
+		JPanel topPanel = new TopPanel();
+		topPanel.setSize(new Dimension(400,150));
+		add(topPanel);
+		setComponentZOrder(topPanel, 0);
 	}
 
 	public void setNPP(NextPuyoPanel npp) {
@@ -69,7 +92,13 @@ public class Field extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		g.drawImage(imageArray[0], 102, 250, 200, 273, this);
 	}
+
+	public boolean isOptimizedDrawingEnabled() {
+        return false;
+    }
+
 
 	boolean isThereNoPuyo(int frameX, int frameY) {
 		//System.out.println("frameX: " + frameX + "    frameY: " + frameY);
