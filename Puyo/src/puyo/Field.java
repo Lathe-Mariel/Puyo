@@ -41,6 +41,7 @@ public class Field extends JPanel {
 	ArrayList<Puyo> droppedPuyos;
 	Image[] imageArray;
 	JFrame container;
+	MiddlePanel middlePanel;
 
 	public Field(JFrame container) {
 		this.container = container;
@@ -87,11 +88,10 @@ public class Field extends JPanel {
 		add(topPanel);
 		setComponentZOrder(topPanel, 0);
 
-		MiddlePanel middlePanel = new MiddlePanel();
+		middlePanel = new MiddlePanel();
 		middlePanel.setBounds(0,151,400,400);
 		add(middlePanel);
 		setComponentZOrder(middlePanel, 0);
-		middlePanel.selectImageNumber(1);
 		
 		listener = new PuyoKeyListener();
 		container.addKeyListener(listener);
@@ -102,9 +102,10 @@ public class Field extends JPanel {
 	public void gameRoop() {
 		System.out.println("gameRoop");
 		while (processDisappearing()) {
+			middlePanel.showImage(1);
 			repaint();
 			try {
-				Thread.sleep(100);
+				Thread.sleep(150);
 			} catch (Exception ex0) {
 				ex0.printStackTrace();
 			}
@@ -120,11 +121,17 @@ public class Field extends JPanel {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
+			
 			for (Iterator<Puyo> i = droppedPuyos.iterator(); i.hasNext();) {
 				surveyLinkedPuyos(i.next());
 			}
 			droppedPuyos.clear();
+			
+			try {
+				Thread.sleep(400);
+			} catch (Exception ex0) {
+				ex0.printStackTrace();
+			}
 		}
 
 		if (puyoArray[3][3] != null) {
