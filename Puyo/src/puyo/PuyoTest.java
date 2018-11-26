@@ -1,6 +1,5 @@
 package puyo;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -32,20 +31,23 @@ public class PuyoTest extends JFrame {
 	 */
 	public PuyoTest() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 0, 460, 850);
+		setBounds(100, 0, 550, 850);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		field0 = new Field(this);
 		field0.init();
 
 		npp = new NextPuyoPanel(field0);
 		field0.setNPP(npp);
-		contentPane.add(field0, BorderLayout.WEST);
+		field0.setBounds(0,0,400,850);
+		contentPane.add(field0);
 		PuyoUtil.addNextPuyoPanel(npp);
 		PuyoUtil.generatePuyos(5);
 		PuyoUtil.generatePuyos(5);
+		npp.setBounds(420,150, 110,150);
+		contentPane.add(npp);
 		field0.gameRoop();
 
 	}

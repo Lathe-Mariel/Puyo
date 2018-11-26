@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -100,9 +101,11 @@ public class Field extends JPanel {
 	KeyListener listener;
 
 	public void gameRoop() {
+		int step = 0;
 		System.out.println("gameRoop");
 		while (processDisappearing()) {
-			middlePanel.showImage(1);
+			step++;
+			middlePanel.showImage(1, step);
 			repaint();
 			try {
 				Thread.sleep(150);
@@ -158,7 +161,15 @@ public class Field extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(imageArray[0], 102, 250, 200, 273, this);
 	}
-
+	
+	public Dimension getPreferredSize() {
+		return new Dimension(400, 850);
+	}
+	
+	public Rectangle getBounds() {
+		return new Rectangle(400,850,0,0);
+	}
+	
 	public boolean isOptimizedDrawingEnabled() {
 		return false;
 	}
@@ -285,9 +296,6 @@ public class Field extends JPanel {
 
 	}
 
-	public Dimension getPreferredSize() {
-		return new Dimension(400, 850);
-	}
 
 	boolean puyo0Movable = true;
 	boolean puyo1Movable = true;

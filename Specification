@@ -2,6 +2,6 @@ puyo color: 6(red, green, blue, yellow, yellowGreen, gray;)
 field tiles: 12x6
 puyo Size: 50x50
 
-上部　２行　puyoArrayは空白にする（ぷよ　上部で回転出来るように) 
 邪魔ぷよ　パネル
 上部2行の扱い。　４連結で消滅させるか？　その場合、最上部まで積みあがった時、既存のprocessDisappearing()でOBException になるはず
+組ぷよ　逆回転

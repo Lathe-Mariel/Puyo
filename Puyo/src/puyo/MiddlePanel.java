@@ -1,5 +1,7 @@
 package puyo;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
@@ -11,6 +13,7 @@ import javax.swing.JPanel;
 public class MiddlePanel extends JPanel {
 	Image imageArray[];
 	int imageNumber;
+	int step;
 
 	public MiddlePanel() {
 		imageNumber = -1;
@@ -38,12 +41,17 @@ public class MiddlePanel extends JPanel {
 			return;
 		Image pic = imageArray[imageNumber];
 		g.drawImage(pic, 74, 50, pic.getWidth(this), pic.getHeight(this), this);
+		g.setFont(new Font("Arial", Font.BOLD, 96));
+		g.setColor(Color.black);
+		g.drawString(step +"",  170, 300);
 	}
 
-	public void showImage(int number) {
+	public void showImage(int iNumber, int step) {
+		this.imageNumber = iNumber;
+		this.step = step;
+
 		new Thread() {
 			public void run() {
-				imageNumber = number;
 				repaint();
 				try {
 					Thread.sleep(600);
