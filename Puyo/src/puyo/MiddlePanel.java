@@ -13,7 +13,8 @@ import javax.swing.JPanel;
 public class MiddlePanel extends JPanel {
 	Image imageArray[];
 	int imageNumber;
-	int step;
+	String step ="";
+	int sleepTime;
 
 	public MiddlePanel() {
 		imageNumber = -1;
@@ -21,7 +22,7 @@ public class MiddlePanel extends JPanel {
 			imageArray = new Image[7];
 			imageArray[0] = ImageIO.read(new File("java.jpg"));
 			imageArray[1] = ImageIO.read(new File("sutenaide.png"));
-			imageArray[2] = ImageIO.read(new File("blue.png"));
+			imageArray[2] = ImageIO.read(new File("batan.png"));
 			imageArray[3] = ImageIO.read(new File("yellow.png"));
 			imageArray[4] = ImageIO.read(new File("purple.png"));
 			imageArray[5] = ImageIO.read(new File("gray.png"));
@@ -37,24 +38,24 @@ public class MiddlePanel extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
-		if (imageNumber == -1)
-			return;
+		if(imageNumber == -1)return;
 		Image pic = imageArray[imageNumber];
 		g.drawImage(pic, 74, 50, pic.getWidth(this), pic.getHeight(this), this);
-		g.setFont(new Font("Arial", Font.BOLD, 96));
+		g.setFont(new Font("MS Gothic", Font.BOLD, 84));
 		g.setColor(Color.black);
-		g.drawString(step +"",  170, 300);
+		g.drawString(step,  172, 335);
 	}
 
-	public void showImage(int iNumber, int step) {
+	public void showImage(int iNumber, String step, int sleep) {
 		this.imageNumber = iNumber;
 		this.step = step;
+		this.sleepTime = sleep;
 
 		new Thread() {
 			public void run() {
 				repaint();
 				try {
-					Thread.sleep(600);
+					Thread.sleep(sleepTime);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
