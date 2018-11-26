@@ -90,10 +90,10 @@ public class Field extends JPanel {
 		setComponentZOrder(topPanel, 0);
 
 		middlePanel = new MiddlePanel();
-		middlePanel.setBounds(0,151,400,420);
+		middlePanel.setBounds(0, 151, 400, 420);
 		add(middlePanel);
 		setComponentZOrder(middlePanel, 0);
-		
+
 		listener = new PuyoKeyListener();
 		container.addKeyListener(listener);
 	}
@@ -105,10 +105,10 @@ public class Field extends JPanel {
 		System.out.println("gameRoop");
 		while (processDisappearing()) {
 			step++;
-			middlePanel.showImage(1, step+"", 750);
+			middlePanel.showImage(1, step + "", 750);
 			repaint();
 			try {
-				Thread.sleep(150);
+				Thread.sleep(250);
 			} catch (Exception ex0) {
 				ex0.printStackTrace();
 			}
@@ -124,12 +124,12 @@ public class Field extends JPanel {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			for (Iterator<Puyo> i = droppedPuyos.iterator(); i.hasNext();) {
 				surveyLinkedPuyos(i.next());
 			}
 			droppedPuyos.clear();
-			
+
 			try {
 				Thread.sleep(300);
 			} catch (Exception ex0) {
@@ -161,15 +161,15 @@ public class Field extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(imageArray[0], 102, 250, 200, 273, this);
 	}
-	
+
 	public Dimension getPreferredSize() {
 		return new Dimension(400, 850);
 	}
-	
+
 	public Rectangle getBounds() {
-		return new Rectangle(400,850,0,0);
+		return new Rectangle(400, 850, 0, 0);
 	}
-	
+
 	public boolean isOptimizedDrawingEnabled() {
 		return false;
 	}
@@ -188,10 +188,6 @@ public class Field extends JPanel {
 		}
 		kumiPuyoDownTimer = new Timer(interval, (ActionListener) listener);
 		kumiPuyoDownTimer.start();
-	}
-
-	void startNewPuyo() {
-
 	}
 
 	private synchronized void surveyLinkedPuyos(Puyo puyo) {
@@ -230,6 +226,10 @@ public class Field extends JPanel {
 			if (puyo == null)
 				continue;
 			puyo.increaseUnderSpace();
+			if(puyoArray[x+1][i] == null)
+				puyo.disConnectPuyos(puyoArray[x+1][i]);
+			if(puyoArray[x-1][i] == null)
+				puyo.disConnectPuyos(puyoArray[x-1][i]);
 		}
 	}
 
@@ -296,7 +296,6 @@ public class Field extends JPanel {
 
 	}
 
-
 	boolean puyo0Movable = true;
 	boolean puyo1Movable = true;
 
@@ -359,7 +358,8 @@ public class Field extends JPanel {
 
 		void toDown() {
 			if (keyInputDisable || (puyo0Movable == false && puyo1Movable == false)) {
-				return;}
+				return;
+			}
 			if (frameY2 < frameY1 && frameX1 == frameX2) {//kumiPuyo state is vertical, and kumiPuyo[0] is upper side. &kumi puyo is still kumi(not splited).
 				puyo0Movable = isThereNoPuyo(frameX1, frameY1 + 1);
 				if (puyo0Movable) {
@@ -422,7 +422,7 @@ public class Field extends JPanel {
 				gameRoop();
 			}
 		}
-		
+
 		void toReverse() {
 			if (frameY1 < frameY2) {
 				if (puyoArray[frameX2 + 1][frameY2 - 1] == null) {
@@ -447,7 +447,7 @@ public class Field extends JPanel {
 			}
 			allKeyLock = false;
 		}
-		
+
 		void toRotate() {
 			if (frameY1 < frameY2) {
 				if (puyoArray[frameX2 - 1][frameY2 - 1] == null) {
@@ -529,10 +529,12 @@ public class Field extends JPanel {
 				});
 
 			}
-allKeyLock =false;
+			allKeyLock = false;
 		}
 	}
-boolean allKeyLock;
+
+	boolean allKeyLock;
+
 	public class PuyoKeyListener implements KeyListener, ActionListener {
 		private boolean keyState[];
 		private boolean doubleRotationLock;
@@ -571,7 +573,6 @@ boolean allKeyLock;
 			default:
 				break;
 			}
-			//keyPressHandler(e);
 		}
 
 		@Override
@@ -608,8 +609,9 @@ boolean allKeyLock;
 			if (keyInputDisable)
 				return;
 			synchronized (kumiPuyo) {
-				if(allKeyLock)return;
-				allKeyLock=true;
+				if (allKeyLock)
+					return;
+				allKeyLock = true;
 				if (keyState[4]) {
 					PuyoMover pm = new PuyoMover();
 					pm.toDown();
@@ -618,7 +620,8 @@ boolean allKeyLock;
 				} else if (keyState[3]) {
 					if (doubleRotationLock) {
 						allKeyLock = false;
-						return;}
+						return;
+					}
 					PuyoMover pm = new PuyoMover();
 					doubleRotationLock = true;
 					pm.toRotate();
@@ -626,7 +629,8 @@ boolean allKeyLock;
 				} else if (keyState[5]) {
 					if (doubleRotationLock) {
 						allKeyLock = false;
-						return;}
+						return;
+					}
 					PuyoMover pm = new PuyoMover();
 					doubleRotationLock = true;
 					pm.toReverse();
@@ -644,8 +648,8 @@ boolean allKeyLock;
 					pm.toDown();
 					pm.start();
 
-				}else {
-					allKeyLock=false;
+				} else {
+					allKeyLock = false;
 				}
 			}
 			//keyProcess = false;
@@ -681,7 +685,7 @@ boolean allKeyLock;
 
 			for (int i = 0; i < 10 * steps; i++) {
 				try {
-					sleep(12);
+					sleep(13);
 				} catch (Exception e) {
 					System.out.println("all Puyo Dropper Sleep");
 					e.printStackTrace();

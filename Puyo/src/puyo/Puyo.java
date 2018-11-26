@@ -102,8 +102,9 @@ public class Puyo extends Component {
 			linkedPuyos = null;
 		}else {
 			LinkedPuyos.master.remove(linkedPuyos);
-			linkedPuyos.puyos.get(0).setLink(null);
-			linkedPuyos.puyos.get(1).setLink(null);
+			LinkedPuyos link = linkedPuyos;
+			link.puyos.get(0).setLink(null);
+			link.puyos.get(1).setLink(null);
 		}
 	}
 	public void resetUnderSpace() {
@@ -142,8 +143,6 @@ public class Puyo extends Component {
 
 	void setFrameX(int x) {
 		this.frameX = x;
-		//this.x = frameX * 50;
-		//setBounds(x, y, 50, 50);
 	}
 
 	int getFrameX() {
@@ -152,9 +151,6 @@ public class Puyo extends Component {
 
 	void setFrameY(int y) {
 		this.frameY = y;
-		//this.y = frameY * 50;
-		//setBounds(x, y, 50, 50);
-		//System.out.println("Puyo position: " + this.y);
 	}
 
 	int getFrameY() {
@@ -183,42 +179,6 @@ public class Puyo extends Component {
 		return colorNumber;
 	}
 
-	/**
-	 * Developer can make puyo to move for 4ways.
-	 * But only one way is possible to order in one time.
-	 * @param x	it can be -1,0,1
-	 * @param y	it can be -1,0,1
-	 */
-	//	void moveCommand(int x, int y) {
-	//		//System.out.println("x: " + x + "  Y: " + y);
-	//		frameX += x;
-	//		frameX = frameX<1?1:frameX;
-	//		frameX = frameX>6?6:frameX;
-	//		frameY += y;
-	//		frameY = frameY>14?14:frameY;
-	//		//new PuyoMover(x, y, this).start();
-	//		PuyoMover pm = new PuyoMover(x, y, this);
-	//		pm.run();
-	//		return;
-	//	}
-	//
-	//	public synchronized void downStairs() {
-	//		System.out.println("downStairs");
-	//		for (int roop = 0; roop < underSpace; roop++) {
-	//			Boolean isFinish = false;
-	//			Thread dropper = new PuyoMover();
-	//			new Thread(dropper).start();
-	//			try {
-	//				while (dropper.isAlive()) {
-	//					Thread.sleep(30);
-	//				}
-	//			} catch (Exception e) {
-	//				e.printStackTrace();
-	//			}
-	//		}
-	//		underSpace = 0;
-	//	}
-
 	public Dimension getPreferredSize() {
 		return new Dimension(50, 50);
 	}
@@ -232,11 +192,13 @@ public class Puyo extends Component {
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(image, 0, 0, this);
+		g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+		if(linkedPuyos != null)
+			g.drawString(linkedPuyos.puyos.size()+"", 10,10);
 	}
 
 	public void paintComponent(Graphics g) {
-		g.drawImage(image, 0, 0, this);
+		g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 	}
 
 }

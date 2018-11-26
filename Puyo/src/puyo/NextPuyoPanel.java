@@ -46,9 +46,9 @@ public class NextPuyoPanel extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		g.fill3DRect(0, 0, getWidth(), getHeight(), true);
-		g.drawImage(nextPuyoQueue.get(0).getImage(),0,0,this);
-		g.drawImage(nextPuyoQueue.get(1).getImage(),0,50,this);
-		g.drawImage(nextPuyoQueue.get(2).getImage(),55,25,this);
-		g.drawImage(nextPuyoQueue.get(3).getImage(),55,75,this);
+		g.drawImage(nextPuyoQueue.get(1).getImage(),0,0,this);
+		g.drawImage(nextPuyoQueue.get(0).getImage(),0,50,this);
+		g.drawImage(nextPuyoQueue.get(3).getImage(),55,25,this);
+		g.drawImage(nextPuyoQueue.get(2).getImage(),55,75,this);
 	}
 }
