@@ -38,11 +38,20 @@ public class Field extends JPanel {
 	private NextPuyoPanel npp;
 	boolean kumiPuyoBroke = false;
 	private boolean keyInputDisable = false;
-	long keyCheckIntervalTime = 60;
+	/**
+	 * Key input polling time interval
+	 */
+	long keyCheckIntervalTime = 65;
 	ArrayList<Puyo> droppedPuyos;
 	Image[] imageArray;
 	JFrame container;
 	MiddlePanel middlePanel;
+	TopPanel topPanel;
+	int[] rensaBonus = {0,8,16,32,64,96,128,160,192,224,256,288,320,352,384,416,448,480,520};//連鎖
+	int[] sameBonus = {0,3,6,12,24};//同時消し
+	int[] numberBonus= {0,2,3,4,5,6,7,10};//個数more than 4
+
+	int rensa;
 
 	public Field(JFrame container) {
 		this.container = container;
@@ -84,7 +93,7 @@ public class Field extends JPanel {
 			add(puyoArray[0][i]);
 			add(puyoArray[7][i]);
 		}
-		JPanel topPanel = new TopPanel();
+		topPanel = new TopPanel();
 		topPanel.setSize(new Dimension(400, 150));
 		add(topPanel);
 		setComponentZOrder(topPanel, 0);
@@ -101,11 +110,11 @@ public class Field extends JPanel {
 	KeyListener listener;
 
 	public void gameRoop() {
-		int step = 0;
-		System.out.println("gameRoop");
+		rensa = 0;
+		//System.out.println("gameRoop");
 		while (processDisappearing()) {
-			step++;
-			middlePanel.showImage(1, step + "", 750);
+			rensa++;
+			middlePanel.showImage(1, rensa + "", 750);
 			repaint();
 			try {
 				Thread.sleep(250);
@@ -135,20 +144,22 @@ public class Field extends JPanel {
 			} catch (Exception ex0) {
 				ex0.printStackTrace();
 			}
+			rensa++;
 		}
 
 		if (puyoArray[3][3] != null) {
 			keyInputDisable = true;
-			middlePanel.showImage(2, "ばたんきゅ～～", 30000);
+			//middlePanel.showImage(2, "ばたんきゅ～～", 30000);
+			middlePanel.gameOver();
 			System.out.println("Game Over");
 		} else {
-			System.out.println(1);
+			//System.out.println(1);
 			kumiPuyo = npp.pop();
 			puyo0Movable = true;
 			puyo1Movable = true;
 			add(kumiPuyo[0]);
 			add(kumiPuyo[1]);
-			createNewTimer(800);
+			createNewTimer(1000 - topPanel.getScore()/20);
 			keyInputDisable = false;
 		}
 	}
@@ -237,11 +248,17 @@ public class Field extends JPanel {
 	 * Disappearing if exists more than four linked puyos.
 	*/
 	public boolean processDisappearing() {
+		int sameDisappearing =0;
 		boolean hasDisappear = false;
 		System.out.println("processDisapeearing()");
 		for (int i = 0; i < LinkedPuyos.master.size(); i++) {
 			LinkedPuyos currentLink = LinkedPuyos.master.get(i);
 			if (currentLink.isDisappearable()) {
+				int puyoNumber = currentLink.puyos.size();
+				int number = (puyoNumber-4)>10?10:puyoNumber -4;
+				int bonus = rensaBonus[rensa] + sameBonus[sameDisappearing] + numberBonus[number];
+				int bonusRate = bonus == 0?1:bonus;
+				topPanel.addScore(puyoNumber*bonusRate);
 				hasDisappear = true;
 				LinkedPuyos.master.remove(currentLink);
 				i--;
@@ -259,6 +276,7 @@ public class Field extends JPanel {
 					//System.out.println("Disappearing " + p.getFrameX() + " : " + p.getFrameY());
 				}
 				currentLink = null;
+				sameDisappearing++;
 			}
 		}
 		//repaint();

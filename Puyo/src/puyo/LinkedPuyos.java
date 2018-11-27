@@ -24,7 +24,7 @@ public class LinkedPuyos {
 	}
 
 	boolean isDisappearable() {
-		System.out.println("isDisappearable:  " + puyos.get(0).getFrameX() + " : " + puyos.get(0).getFrameY() + "     size: " + puyos.size() + "  color: " + puyos.get(0).getColorNumber());
+		System.out.println("isDisappearable >    x:" + puyos.get(0).getFrameX() + " , y:" + puyos.get(0).getFrameY() + "     size: " + puyos.size() + "  color: " + puyos.get(0).getColorNumber());
 		if(puyos.size() > 3)return true;
 		return false;
 	}
