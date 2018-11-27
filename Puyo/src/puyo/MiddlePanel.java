@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +45,7 @@ public class MiddlePanel extends JPanel {
 			return;
 		}
 		//Image pic = imageArray[imageNumber];
-		g.drawImage(image, 85, 50, getWidth() * 2 / 3, getHeight() * 2 / 3, this);
+		g.drawImage(image, 73, 50, getWidth() * 2 / 3, getHeight() * 2 / 3, this);
 		g.setFont(new Font("MS Gothic", Font.BOLD, 84));
 		g.setColor(Color.black);
 		g.drawString(message, 172, 355);
@@ -77,13 +74,16 @@ public class MiddlePanel extends JPanel {
 	public void gameOver() {
 		imageNumber = 0;
 		BufferedImage originalImage = imageArray[3];
-
-		for (int i = 0; i < 90; i++) {
+int i =0;
+int j=1;
+		while (true) {
+			boolean  highEnd, lowEnd;
+			i += j;
 			int angle = i * -2;
 
-			BufferedImage newImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			BufferedImage newImage = new BufferedImage(originalImage.getWidth()+100, originalImage.getHeight()+50, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D gra = (Graphics2D)newImage.getGraphics();
-			gra.rotate(angle * Math.PI / 180, originalImage.getWidth() / 2.0, originalImage.getHeight() / 2.0);
+			gra.rotate(angle * Math.PI / 180, 40+ originalImage.getWidth() / 2.0, 20+originalImage.getHeight() / 2.0);
 			gra.drawImage(originalImage, 0, 0, this);
 
 			Graphics2D gra2 = (Graphics2D)newImage.getGraphics();
@@ -98,38 +98,13 @@ public class MiddlePanel extends JPanel {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			if(i > 100) {
+				j= -1;
+			}
+			if(i < 60) {
+				j=1;
+			}
+			
 		}
-	}
-
-	private BufferedImage angle(BufferedImage image, int angle) {
-		int w = image.getWidth();
-		int h = image.getHeight();
-
-		Point diag1 = rotate(new Point(w, h), angle);
-		Point diag2 = rotate(new Point(-w, h), angle);
-		int width = Math.max(Math.abs(diag1.x), Math.abs(diag2.x));
-		int height = Math.max(Math.abs(diag1.y), Math.abs(diag2.y));
-
-		double cx = (w * Math.cos(angle) - h * Math.sin(angle)) / 2.0;
-		double cy = (w * Math.sin(angle) + h * Math.cos(angle)) / 2.0;
-
-		AffineTransform af = new AffineTransform();
-		double dx = width / 2.0 - cx;
-		double dy = height / 2.0 - cy;
-		af.setToTranslation(dx, dy);
-		af.rotate(angle);
-
-		BufferedImage rotated = new BufferedImage(width, height, image.getType());
-		AffineTransformOp op = new AffineTransformOp(af, AffineTransformOp.TYPE_BICUBIC);
-		op.filter(image, rotated);
-		return rotated;
-	}
-
-	public static Point rotate(Point point, double angle) {
-		double th = Math.atan2(point.getY(), point.getX());
-		double norm = Math.sqrt(point.getX() * point.getX() + point.getY() * point.getY());
-		double x = norm * Math.cos(th - angle);
-		double y = norm * Math.sin(th - angle);
-		return new Point((int) Math.round(x), (int) Math.round(y));
 	}
 }
