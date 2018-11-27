@@ -76,6 +76,7 @@ public class MiddlePanel extends JPanel {
 		BufferedImage originalImage = imageArray[3];
 int i =0;
 int j=1;
+int speed = 12;
 		while (true) {
 			boolean  highEnd, lowEnd;
 			i += j;
@@ -87,19 +88,20 @@ int j=1;
 			gra.drawImage(originalImage, 0, 0, this);
 
 			Graphics2D gra2 = (Graphics2D)newImage.getGraphics();
-			gra2.setColor(new Color(0x55, 0x55, 0xFF));
-			gra2.setFont(new Font("Serif", Font.BOLD, 86));
+			gra2.setColor(new Color(0x33, 0x33, 0xDD, 180));
+			gra2.setFont(new Font("Meiryo Bold", Font.BOLD, 96));
 			gra2.drawString("ばたん", 0,400);
 			gra2.drawString("きゅ～", 100,480);
 			image = newImage;
 			repaint();
 			try {
-				Thread.sleep(10);
+				Thread.sleep(speed);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			if(i > 100) {
 				j= -1;
+				speed = 20;
 			}
 			if(i < 60) {
 				j=1;
