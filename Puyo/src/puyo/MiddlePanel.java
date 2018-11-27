@@ -43,11 +43,15 @@ public class MiddlePanel extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
+		if(imageNumber == -1) {
+			message = "";
+			return;
+		}
 		//Image pic = imageArray[imageNumber];
 		g.drawImage(image, 85, 50, getWidth() * 2 / 3, getHeight() * 2 / 3, this);
 		g.setFont(new Font("MS Gothic", Font.BOLD, 84));
 		g.setColor(Color.black);
-		g.drawString(message, 172, 305);
+		g.drawString(message, 172, 355);
 	}
 
 	public void showImage(int iNumber, String message, int sleep) {
@@ -71,19 +75,20 @@ public class MiddlePanel extends JPanel {
 	}
 
 	public void gameOver() {
+		imageNumber = 0;
 		BufferedImage originalImage = imageArray[3];
-		
+
 		for (int i = 0; i < 90; i++) {
 			int angle = i * -2;
-			
+
 			BufferedImage newImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics2D gra = (Graphics2D)newImage.getGraphics();
 			gra.rotate(angle * Math.PI / 180, originalImage.getWidth() / 2.0, originalImage.getHeight() / 2.0);
 			gra.drawImage(originalImage, 0, 0, this);
-			
+
 			Graphics2D gra2 = (Graphics2D)newImage.getGraphics();
-			gra2.setColor(new Color(0x55, 0xFF, 0xFF));
-			gra2.setFont(new Font("Serif", Font.BOLD, 80));
+			gra2.setColor(new Color(0x55, 0x55, 0xFF));
+			gra2.setFont(new Font("Serif", Font.BOLD, 86));
 			gra2.drawString("ばたん", 0,400);
 			gra2.drawString("きゅ～", 100,480);
 			image = newImage;
