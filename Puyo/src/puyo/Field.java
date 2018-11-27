@@ -234,12 +234,13 @@ public class Field extends JPanel {
 		int x = disappearingPuyo.getFrameX();
 		for (int i = disappearingPuyo.getFrameY() - 1; i > 0; i--) {
 			Puyo puyo = puyoArray[x][i];
-			if (puyo == null)
-				continue;
+			if (puyo == null)	
+				
+				
 			puyo.increaseUnderSpace();
-			if(puyoArray[x+1][i] == null)
+			if(puyoArray[x+1][i] != null)
 				puyo.disConnectPuyos(puyoArray[x+1][i]);
-			if(puyoArray[x-1][i] == null)
+			if(puyoArray[x-1][i] != null)
 				puyo.disConnectPuyos(puyoArray[x-1][i]);
 		}
 	}
