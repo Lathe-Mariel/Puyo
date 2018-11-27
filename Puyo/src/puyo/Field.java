@@ -269,8 +269,8 @@ public class Field extends JPanel {
 					remove(puyoArray[disappearX][disappearY]);
 					puyoArray[disappearX][disappearY] = null;
 					notifyDisappeared(p);
-					p.disConnectPuyos(puyoArray[disappearX + 1][disappearY]);
-					p.disConnectPuyos(puyoArray[disappearX - 1][disappearY]);
+					//p.disConnectPuyos(puyoArray[disappearX + 1][disappearY]);
+					//p.disConnectPuyos(puyoArray[disappearX - 1][disappearY]);
 
 					//System.out.println("Disappearing " + p.getFrameX() + " : " + p.getFrameY());
 				}
