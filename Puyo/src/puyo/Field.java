@@ -234,7 +234,7 @@ public class Field extends JPanel {
 		int x = disappearingPuyo.getFrameX();
 		for (int i = disappearingPuyo.getFrameY() - 1; i > 0; i--) {
 			Puyo puyo = puyoArray[x][i];
-			if (puyo == null)break;			
+			if (puyo == null)continue;			
 			puyo.increaseUnderSpace();
 			if(puyoArray[x+1][i] != null)
 				puyo.disConnectPuyos(puyoArray[x+1][i]);
