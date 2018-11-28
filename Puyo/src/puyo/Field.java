@@ -373,10 +373,11 @@ public class Field extends JPanel {
 		}
 
 		void toDown() {
-			if (keyInputDisable || (puyo0Movable == false && puyo1Movable == false)) {
+			if (keyInputDisable) {
 				return;
 			}
-			if (frameY2 < frameY1 && frameX1 == frameX2) {//kumiPuyo state is vertical, and kumiPuyo[0] is upper side. &kumi puyo is still kumi(not splited).
+
+			if (frameY2 < frameY1) {//kumiPuyo state is vertical, and kumiPuyo[0] is upper side. &kumi puyo is still kumi(not splited).
 				puyo0Movable = isThereNoPuyo(frameX1, frameY1 + 1);
 				if (puyo0Movable) {
 					increaseY1 = 1;
@@ -384,7 +385,7 @@ public class Field extends JPanel {
 				} else {
 					puyo1Movable = false;
 				}
-			} else if (frameY2 > frameY1 && frameX1 == frameX2) {//kumiPuyo state is vertical, and kumiPuyo[1] is upper side. &kumi puyo is still kumi(not splited).
+			} else if (frameY2 > frameY1) {//kumiPuyo state is vertical, and kumiPuyo[1] is upper side. &kumi puyo is still kumi(not splited).
 				puyo1Movable = isThereNoPuyo(frameX2, frameY2 + 1);
 				if (puyo1Movable) {
 					increaseY2 = 1;
@@ -398,6 +399,8 @@ public class Field extends JPanel {
 				if (puyo0Movable && puyo1Movable) {
 					increaseY1 = 1;
 					increaseY2 = 1;
+					allKeyLock = false;
+					return;
 				} else if (puyo1Movable) {
 					keyInputDisable = true;
 					while (puyoArray[frameX2][++frameY2] == null) {
@@ -406,7 +409,6 @@ public class Field extends JPanel {
 					frameY2--;
 					new PuyoDropper2(kumiPuyo[1], null).run();
 					puyo1Movable = false;
-
 				} else {
 					keyInputDisable = true;
 					while (puyoArray[frameX1][++frameY1] == null) {
@@ -418,10 +420,8 @@ public class Field extends JPanel {
 				}
 			}
 			if (puyo0Movable == false) {
-
 				puyoArray[frameX1][frameY1] = kumiPuyo[0];
 				surveyLinkedPuyos(kumiPuyo[0]);
-
 				//kumiPuyoBroke = true;
 				//System.out.println("kumiPuyo[0] -> puyoArray:X " + frameX1 + " :Y " +frameY1);
 			}
@@ -435,6 +435,7 @@ public class Field extends JPanel {
 				System.out.println(3);
 				kumiPuyoDownTimer.stop();
 				keyInputDisable = true;
+				allKeyLock = false;
 				gameRoop();
 			}
 		}
