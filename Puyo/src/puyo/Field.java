@@ -144,7 +144,6 @@ public class Field extends JPanel {
 			} catch (Exception ex0) {
 				ex0.printStackTrace();
 			}
-			rensa++;
 		}
 
 		if (puyoArray[3][3] != null) {
