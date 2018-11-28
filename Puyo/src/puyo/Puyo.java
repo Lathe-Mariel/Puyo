@@ -95,7 +95,7 @@ public class Puyo extends Component {
 		}
 	}
 	
-	void disConnectPuyos(Puyo second) {
+	void disConnectPuyos() {
 		if(linkedPuyos == null)return;
 		if(linkedPuyos.puyos.size() > 2) {
 			linkedPuyos.remove(this);
